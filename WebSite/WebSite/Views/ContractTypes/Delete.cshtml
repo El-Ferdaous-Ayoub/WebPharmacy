@@ -1,0 +1,67 @@
+﻿@model Classes.Contract_Type
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Contract Type</h2>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Duration)
+        </dt>
+
+        <dd>
+            @{ 
+                String str = Model.Duration ? "Limited" : "Unlimited";
+            }
+            @Html.Label(str)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+<div class="form-actions no-color">
+    @if (Model.Title.CompareTo("Unknown") != 0)
+    {
+        <input type="submit" value="Delete" class="btnDelete" />
+    }
+    <br /><br />
+    @Html.ActionLink("  Back to List", "Index", null, new { @class = "LinkBack" })
+</div>
+    }
+<div class="card-body table-responsive p-0 tbl" style="height: 70vh;">
+    <table>
+        <tr>
+            <th>Employee</th>
+            <th>Contract Start</th>
+            <th>Contract End</th>
+            <th>Document</th>
+        </tr>
+        <tbody>
+            @foreach (var item in ViewBag.Contracts as List<Classes.Contract>)
+            {
+                <tr>
+                    <td>@item.Employee_NIC</td>
+                    <td>@item.Start</td>
+                    <td>@item.End</td>
+                    <td><a href="../../Content/Document/@item" class="btn btn-outline-primary">Contract</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+</div>

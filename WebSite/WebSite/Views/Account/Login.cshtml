@@ -1,0 +1,61 @@
+﻿@model WebSite.Models.LoginModel
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+    String Title = (WebSite.Models.Config.Pharmacy != null) ? WebSite.Models.Config.Pharmacy.Name : "Pharmcy";
+}
+<html lang="zxx">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Particles Login Form Form a Responsive Web Template, Bootstrap Web Templates, Flat Web Templates, Android Compatible Web Template, Smartphone Compatible Web Template, Free Webdesigns for Nokia, Samsung, LG, Sony Ericsson, Motorola Web Design">
+    <script>
+		addEventListener("load", function () {
+			setTimeout(hideURLbar, 0);
+		}, false);
+
+		function hideURLbar() {
+			window.scrollTo(0, 1);
+		}
+    </script>
+    <link href="~/Content/Login/css/style.css" rel='stylesheet' type='text/css' />
+    <link href="https://fonts.googleapis.com/css?family=Amiri:400,400i,700,700i" rel="stylesheet">
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <div class="w3ls-pos">
+        <h1>@Title</h1>
+        <div class="w3ls-login box">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="agile-field-txt">
+                    <input type="text" name="UserName" id="UserName" placeholder="Username or Email" required style=" width: 100%; color: #fff; outline: none; font-size: 17px; letter-spacing: 0.5px; padding: 15px; box-sizing: border-box; border: none; -webkit-appearance: none; font-family: 'Amiri', serif; background: rgba(0, 0, 0, 0.53);" />
+                </div>
+                <div class="agile-field-txt">
+                    <input type="password" name="password" placeholder="Password" required id="myInput" />
+                </div>
+
+                <div class="w3ls-bot">
+                    <input type="submit" value="LOGIN">
+                </div>
+            </div>
+            }
+        </div>
+        <div class="copy-wthree">
+            <p>
+                © 2018 Particles Login Form. All Rights Reserved | Design by
+                <a href="http://w3layouts.com/" target="_blank">W3layouts</a>
+            </p>
+        </div>
+    </div>
+    <script src='~/Content/Login/js/particles.min.js'></script>
+    <script src="~/Content/Login/js/index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Classes.Models.UserModel>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (!String.IsNullOrEmpty(ViewBag.Error))
+    {
+        <script>alert("@ViewBag.Error");</script>
+    }
+
+}
+
+
+<div>
+    <div class="d-inline col-md-10">
+        <h4 class="d-inline">Employees List</h4>
+    </div>
+    @Html.ActionLink(" ", "Create", null, new { @class = "LinkCreate"})
+</div>
+
+<hr />
+<div class="card card-solid">
+    <div class="card-body pb-0">
+        <div class="row d-flex align-items-stretch">
+                @foreach (var item in Model)
+                {
+                    <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+                        <div class="card bg-light">
+                            <div class="card-header text-muted border-bottom-0 fa fa-id-badge">
+                                @item.NIC
+                            </div>
+                            <div class="card-body pt-0">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <h2 class="lead"><b>@item.FirstName @item.LastName</b></h2>
+                                        <ul class="ml-4 mb-0 fa-ul text-muted">
+                                            <li class="small"><span class="fa-li"><i class="fas fa-lg fa-tasks"></i></span>@item.Departement_Title</li>
+                                            <li class="small"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span>@item.Address</li>
+                                            <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span>@item.Phone</li>
+                                            <li class="small"><span class="fa-li"><i class="fas fa-lg fa-envelope"></i></span>@item.Email</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-5 text-center">
+                                        <img src="~/Content/Images/Users/@item.Photo" alt="user-avatar" class="img-circle img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="text-right">
+                                    @Html.ActionLink(" ", "Edit", new { id = item.NIC }, new { @class = "LinkEdit" })
+                                    @Html.ActionLink(" ", "More", new { id = item.NIC }, new { @class = "LinkMore" })
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+</div>

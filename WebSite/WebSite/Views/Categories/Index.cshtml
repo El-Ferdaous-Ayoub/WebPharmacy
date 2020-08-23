@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Classes.Category>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (!String.IsNullOrEmpty(ViewBag.Error))
+    {
+        <script>alert("@ViewBag.Error");</script>
+    }
+}
+
+
+<h2>List Of Categories</h2>
+<br />
+<div >
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>@Html.ActionLink(" ", "Create", null, new { @class = "LinkCreate" })</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelitem => item.Name)
+                    </td>
+                    <td>
+                        @if (item.Name.CompareTo("Unknown") != 0) {
+                              @Html.ActionLink(" ", "Edit", new { id = item.Name }, new { @class = "LinkEdit" })
+                        }
+                        @Html.ActionLink(" ", "Delete", new { id = item.Name }, new { @class = "LinkMore" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

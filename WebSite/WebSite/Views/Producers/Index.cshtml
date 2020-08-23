@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Classes.Producer>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (!String.IsNullOrEmpty(ViewBag.Error))
+    {
+        <script>alert("@ViewBag.Error")</script>
+    }
+
+}
+
+<h2>Producers</h2>
+
+<hr />
+<div class="card-body table-responsive p-0" style="height: 70vh;">
+    <table class="table">
+        <tr>
+            <th>
+                Producer
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneN)
+            </th>
+            <th>
+                @Html.ActionLink(" ", "Create", null, new { @class = "LinkCreate" })
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneN)
+                </td>
+                <td>
+                    @if (item.Name.CompareTo("Unknown") != 0)
+                    {
+                        @Html.ActionLink(" ", "Edit", new { id = item.Name }, new { @class = "LinkEdit" })
+                    }
+                    @Html.ActionLink(" ", "Delete", new { id = item.Name }, new { @class = "LinkMore" })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+
+

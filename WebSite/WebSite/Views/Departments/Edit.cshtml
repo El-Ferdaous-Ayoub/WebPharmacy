@@ -1,0 +1,101 @@
+﻿@model Classes.Models.DepartmentModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit Department</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Title)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @disable = "disable" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("New Title", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.Editor("NewTitle", new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Time_Work, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Time_Work, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Time_Work, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Salary, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Salary, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Access", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" style="width:250px">
+                    <div class="custom-control custom-checkbox">
+                        @Html.EditorFor(model => model.Pharmacy_Info, new { htmlAttributes = new { @class = "form-check-input" } }) Pharmacy Info
+                    </div>
+                </li>
+                <li class="list-group-item" style="width:250px">
+                    <p><i><b>Human Resources</b></i></p>
+                    <div class="custom-control custom-checkbox">
+                        @Html.EditorFor(model => model.Departments, new { htmlAttributes = new { @class = "form-check-input" } }) Departments
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        @Html.EditorFor(model => model.ContractTypes, new { htmlAttributes = new { @class = "form-check-input" } }) Contract Types
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        @Html.EditorFor(model => model.Employees, new { htmlAttributes = new { @class = "form-check-input" } }) Employees
+                    </div>
+                </li>
+                <li class="list-group-item" style="width:250px">
+                    <p><i><b>Stock</b></i></p>
+                    <div class="custom-control custom-checkbox">
+                        @Html.EditorFor(model => model.Categories, new { htmlAttributes = new { @class = "form-check-input" } }) Categories
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        @Html.EditorFor(model => model.Producers, new { htmlAttributes = new { @class = "form-check-input" } }) Producers
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        @Html.EditorFor(model => model.Products, new { htmlAttributes = new { @class = "form-check-input" } }) Products
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        @Html.EditorFor(model => model.Orders, new { htmlAttributes = new { @class = "form-check-input" } }) Orders
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btnSave" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("  Back to List", "Index", null, new { @class = "LinkBack" })
+</div>

@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Classes.Product>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (!String.IsNullOrEmpty(ViewBag.Error))
+    {
+        <script>alert("@ViewBag.Error");</script>
+    }
+}
+<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+<h2>List Of Products</h2>
+
+<table>
+    <tr>
+        @using (Html.BeginForm())
+        {
+            <td>
+                <input type="text" name="ID" value="" placeholder="ID or Product Name..." class="form-control" />
+            </td>
+            <td>
+                @Html.DropDownList("Producer_Name", null, htmlAttributes: new { @class = "form-control" })
+            </td>
+            <td>
+                @Html.DropDownList("Category_Name", null, htmlAttributes: new { @class = "form-control" })
+            </td>
+            <td>
+                <button class="btn btn-success" style="height:5vh"><i class="fa fa-search" aria-hidden="true"></i></button>
+            </td>
+        }
+    </tr>
+</table>
+<div class="card-body table-responsive p-0" style="height: 70vh;">
+    <table class="table">
+        <tr>
+            <th>
+                Product ID
+            </th>
+            <th>
+                Picture
+            </th>
+            <th>
+                Prduct Name
+            </th>
+            <th>
+                Producer
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Discount
+            </th>
+            <th>  @Html.ActionLink(" ", "Create", null, new { @class = "LinkCreate" })</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    <img src="~/Content/Images/Products/@item.Picture" alt="Alternate Text" width="50" height="50" class="img-thumbnail" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Producer_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @{
+                        var d = item.Discount * 100;
+                    }
+                    <text>@d%</text>
+                </td>
+                <td>
+                    @Html.ActionLink(" ", "Edit", new { id = item.ID }, new { @class = "LinkEdit" })
+                    @Html.ActionLink(" ", "Delete", new { id = item.ID }, new { @class = "LinkMore" })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

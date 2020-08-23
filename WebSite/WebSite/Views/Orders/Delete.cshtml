@@ -1,0 +1,192 @@
+﻿@model Classes.Order
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Order</h2>
+
+<div>
+    <hr />
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+<dl class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(model => model.ID)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.ID)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.Description)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Description)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Date)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Date)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.PaidAmount)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.PaidAmount)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.TotalAmount)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.TotalAmount)
+    </dd>
+
+    <dt>
+        Arrived To Stock
+    </dt>
+
+    <dd>
+        @Html.CheckBox("ChangeQuantity", (Boolean)ViewBag.Done)
+    </dd>
+
+    <dt>
+        Product's Quantity Changed
+    </dt>
+
+    <dd>
+        @Html.CheckBox("QuantityChanged", (Boolean)ViewBag.QuantityChanged)
+    </dd>
+
+    <dt>
+        Subtract from stock ?
+    </dt>
+
+    <dd>
+        @Html.CheckBox("SubtractQuantity", false)
+    </dd>
+</dl>
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btnDelete" />
+            @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btnEdit" })
+            <br />
+            <br />
+            @Html.ActionLink("  Back to List", "Index", null, new { @class = "LinkBack" })
+        </div>
+    }
+</div>
+
+<div class="card-body table-responsive p-0" style="height: 60vh;">
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    Product ID
+                </th>
+                <th>
+                    Picture
+                </th>
+                <th>
+                    Prduct Name
+                </th>
+                <th>
+                    Producer
+                </th>
+                <th>
+                    Category
+                </th>
+                <th>
+                    Selling Price
+                </th>
+                <th>
+                    Stock Quantity
+                </th>
+                <th>
+                    Purchasing Price
+                </th>
+                <th>
+                    Quantity
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody">
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>
+                    Product ID
+                </th>
+                <th>
+                    Picture
+                </th>
+                <th>
+                    Prduct Name
+                </th>
+                <th>
+                    Producer
+                </th>
+                <th>
+                    Category
+                </th>
+                <th>
+                    Selling Price
+                </th>
+                <th>
+                    Stock Quantity
+                </th>
+                <th>
+                    Purchasing Price
+                </th>
+                <th>
+                    Quantity
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+@section Scripts{
+    <script>
+    $(function () {
+        LoadProducts();
+        function LoadProducts() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetProducts")',
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    var tblhtml = '';
+                    $.each(data, function (key, item) {
+                        tblhtml += '<tr>'
+                            + '<td>' + item.ID + '</td>'
+                            + '<td><img src="../../Content/Images/Products/' + item.Image + '" alt="Alternate Text" width="50" height="50" class="img-thumbnail" /> </td>'
+                            + '<td>' + item.Name + '</td>'
+                            + '<td>' + item.Category + '</td>'
+                            + '<td>' + item.Producer + '</td>'
+                            + '<td>' + item.SellingPrice + '</td>'
+                            + '<td>' + item.StockQuantity + '</td>'
+                            + '<td>' + item.PurchasePrice+ '</td>'
+                            + '<td>' + item.OrderQuantity + '</td>'
+                            + '</tr>'
+                    })
+                    $('.tbody').html(tblhtml);
+                },
+                error: function () {
+                    alert("Error while inserting data");
+                }
+            })
+        }
+    })
+    </script>
+    }

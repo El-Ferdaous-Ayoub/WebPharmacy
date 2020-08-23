@@ -1,0 +1,16 @@
+C:\Users\HP\source\repos\WebSite\BAL\bin\Debug\netstandard2.0\BAL.deps.json
+C:\Users\HP\source\repos\WebSite\BAL\bin\Debug\netstandard2.0\BAL.dll
+C:\Users\HP\source\repos\WebSite\BAL\bin\Debug\netstandard2.0\BAL.pdb
+C:\Users\HP\source\repos\WebSite\BAL\bin\Debug\netstandard2.0\Classes.dll
+C:\Users\HP\source\repos\WebSite\BAL\bin\Debug\netstandard2.0\DAL.dll
+C:\Users\HP\source\repos\WebSite\BAL\bin\Debug\netstandard2.0\EntityFramework.dll
+C:\Users\HP\source\repos\WebSite\BAL\bin\Debug\netstandard2.0\Classes.pdb
+C:\Users\HP\source\repos\WebSite\BAL\bin\Debug\netstandard2.0\DAL.pdb
+C:\Users\HP\source\repos\WebSite\BAL\bin\Debug\netstandard2.0\EntityFramework.xml
+C:\Users\HP\source\repos\WebSite\BAL\obj\Debug\netstandard2.0\BAL.csprojAssemblyReference.cache
+C:\Users\HP\source\repos\WebSite\BAL\obj\Debug\netstandard2.0\BAL.AssemblyInfoInputs.cache
+C:\Users\HP\source\repos\WebSite\BAL\obj\Debug\netstandard2.0\BAL.AssemblyInfo.cs
+C:\Users\HP\source\repos\WebSite\BAL\obj\Debug\netstandard2.0\BAL.csproj.CoreCompileInputs.cache
+C:\Users\HP\source\repos\WebSite\BAL\obj\Debug\netstandard2.0\BAL.csproj.CopyComplete
+C:\Users\HP\source\repos\WebSite\BAL\obj\Debug\netstandard2.0\BAL.dll
+C:\Users\HP\source\repos\WebSite\BAL\obj\Debug\netstandard2.0\BAL.pdb

@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Classes.Contract>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Contracts</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Employee_NIC)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Start)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.End)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Document)
+        </th>
+        <th>
+            @Html.ActionLink(" ", "Create", null, new { @class = "LinkCreate" })
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <th>
+        @Html.DisplayFor(modelItem => item.Employee_NIC)
+    </th>
+    <td>
+        @Html.DisplayFor(modelItem => item.Type)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Start)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.End)
+    </td>
+    <td>
+        <a href="~/Content/Documents/@item.Document">Contract</a>
+    </td>
+    <td>
+        @Html.ActionLink(" ", "Edit", new { id = item.Employee_NIC }, new { @class = "LinkEdit" })
+        @Html.ActionLink(" ", "Delete", new { id = item.Employee_NIC }, new { @class = "LinkMore" })
+    </td>
+</tr>
+}
+
+</table>

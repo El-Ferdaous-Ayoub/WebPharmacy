@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Classes.Department>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (!String.IsNullOrEmpty(ViewBag.Error))
+    {
+        <script>alert("@ViewBag.Error");</script>
+    }
+
+}
+
+<h2>Depatements</h2>
+<hr />
+<div class="card-body table-responsive p-0 tbl">
+    <table>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time_Work)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Salary)
+            </th>
+            <th>
+                @Html.ActionLink(" ", "Create", null, new { @class = "LinkCreate" })
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time_Work)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Salary)
+                </td>
+                <td>
+                    @if (item.Title.CompareTo("Unknown") != 0)
+                    {
+                        @Html.ActionLink(" ", "Edit", new { id = item.Title }, new { @class = "LinkEdit" })
+                    }
+                    @Html.ActionLink(" ", "Delete", new { id = item.Title }, new { @class = "LinkMore" })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+
