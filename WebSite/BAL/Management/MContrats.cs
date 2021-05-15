@@ -10,9 +10,9 @@ namespace BAL
 {
     public class MContrats
     {
-        public Contract Get(String NIC)
+        public Contract Get(int ID)
         {
-            return Get_Data.Get_Contract(NIC);
+            return Get_Data.Get_Contract(ID);
         }
 
         public List<Contract> Get_All()
@@ -22,31 +22,28 @@ namespace BAL
 
         public void Update(Contract contrat)
         {
-            Contract org = Get(contrat.Employee_NIC);
-            if (org == null) throw new Exception($"Employee's ({contrat.Employee_NIC}) Contract is Not Exist");
+            Contract org = Get(contrat.ID);
+            if (org == null) throw new Exception($"Contract Not Exist");
             Management.Detach(org);
             Management.Update(contrat);
         }
 
         public void Add(Contract contrat)
         {
-            if (Get(contrat.Employee_NIC) != null) throw new Exception($"Employee's ({contrat.Employee_NIC}) Contract is Aready Exist");
+            if (Get(contrat.Employee_ID) != null) throw new Exception($"Contract Aready Exist");
             Management.Add(contrat);
         }
 
-        public void Remove(String NIC)
+        public void Remove(int ID)
         {
-            Contract org = Get(NIC);
+            Contract org = Get(ID);
             if (org != null) 
             Management.Remove(org);
         }
 
-        public void NewNIC(String orgNIC, Contract contract)
+        public Contract GetEmpContract(int empid)
         {
-            Contract org = Get(orgNIC);
-            if (org == null) throw new Exception($"Employee's ({orgNIC}) Contract is Not Exist");
-            Add(contract);
-            Management.Remove(org);
+            return Get_Data.Get_Contracts().Where(item => item.Employee_ID == empid).FirstOrDefault();
         }
     }
 }

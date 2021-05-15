@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1WD73uexKFeS4JLSkSe2ILW/y4Z3CcWVu1iTusZ5k3E0IRBfnAcplKiar6GHL+dKFPOfAfkhUf96OcHVKbKChA==",
+  "dgSpecHash": "O+JrPgpumSlr6UFc9ZiV5w8qZoC8zcqTBLc0m2XcBf91gNayHR4T31eSnFd+x/Vp/w3QRaW8mrwHWWdDEuaheQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\HP\\source\\repos\\WebSite\\Classes\\Classes.csproj",
+  "projectFilePath": "D:\\New folder\\WebPharmacy-master\\WebSite\\Classes\\Classes.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.authentication.core\\2.2.0\\microsoft.aspnetcore.authentication.core.2.2.0.nupkg.sha512",

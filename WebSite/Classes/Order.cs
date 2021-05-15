@@ -21,7 +21,6 @@ namespace Classes
         [Display(Name = "Total Amount")]
         [Range(0, float.MaxValue)]
         public float TotalAmount { get; set; }
-        public String Owner { get; set; }
 
         public virtual ICollection<OrderInfo> Products { get; set; }
     }

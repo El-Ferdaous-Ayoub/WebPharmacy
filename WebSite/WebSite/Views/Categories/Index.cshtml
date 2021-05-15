@@ -29,9 +29,9 @@
                     </td>
                     <td>
                         @if (item.Name.CompareTo("Unknown") != 0) {
-                              @Html.ActionLink(" ", "Edit", new { id = item.Name }, new { @class = "LinkEdit" })
+                              @Html.ActionLink(" ", "Edit", new { id = item.ID }, new { @class = "LinkEdit" })
                         }
-                        @Html.ActionLink(" ", "Delete", new { id = item.Name }, new { @class = "LinkMore" })
+                        @Html.ActionLink(" ", "Delete", new { id = item.ID }, new { @class = "LinkMore" })
                     </td>
                 </tr>
             }

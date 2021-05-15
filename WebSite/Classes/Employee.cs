@@ -1,47 +1,36 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using Classes.Models;
 
 namespace Classes
 {
-    [Table("Employees")]
+    [Table("Users")]
     public class Employee
     {
-        [Key, Required]
-        public String ID { get; set; }
-        public String UserName { get; set; }
+        [Key]
+        public int ID { get; set; }
+        public String NIC { get; set; }
+        public String Password { get; set; }
+        public String Picture { get; set; }
+        [Display(Name = "First Name")]
+        public String FirstName { get; set; }
+        [Display(Name = "Last Name")]
+        public String LastName { get; set; }
+        public String Gender { get; set; }
+        public String Phone { get; set; }
+        [Display(Name = "Phone 2")]
+        public String Phone2 { get; set; }
+        [EmailAddress]
+        public String Email { get; set; }
+        public String Address { get; set; }
         [Display(Name = "Department")]
-        public String Department_Title { get; set; }
-        [Display(Name = "Health Coverage")]
-        public String Health_Coverage { get; set; }
+        public int Department_ID { get; set; }
         [Display(Name = "Bank Account")]
         public String BankAccountN { get; set; }
 
+        [ForeignKey("Department_ID")]
         public virtual Department Department { get; set; }
-        public virtual User User { get; set; }
 
-        public void SetEmployee(Employee employee)
-        {
-            if (employee != null)
-            {
-                ID = employee.ID;
-                UserName = employee.UserName;
-                Department_Title = employee.Department_Title;
-                Health_Coverage = employee.Health_Coverage;
-                BankAccountN = employee.BankAccountN;
-            }
-        }
-
-        public Employee GetEmployee()
-        {
-            return new Employee()
-            {
-                ID = ID,
-                UserName = UserName,
-                Department_Title = Department_Title,
-                Health_Coverage = Health_Coverage,
-                BankAccountN = BankAccountN
-            };
-        }
     }
 }

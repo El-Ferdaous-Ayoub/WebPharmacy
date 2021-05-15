@@ -11,7 +11,8 @@ namespace Classes
     [Table("Categories")]
     public class Category
     {
-        [Key,Required]
+        [Key]
+        public int ID { get; set; }
         [Display(Name = "Category")]
         public String Name { get; set; }
 

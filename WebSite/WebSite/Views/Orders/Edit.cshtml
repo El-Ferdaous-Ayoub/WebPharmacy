@@ -84,6 +84,16 @@
         <h4>Order</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ID, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ID, new { htmlAttributes = new { @class = "form-control col-md-4", @readonly = "readonly", disable = "disable" } })
+            @Html.ValidationMessageFor(model => model.ID, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
         <div class="form-group">
             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -114,20 +124,6 @@
                 @Html.EditorFor(model => model.TotalAmount, new { htmlAttributes = new { @class = "form-control col-md-4 d-inline", @readonly = "readonly" } })
                 @Html.ValidationMessageFor(model => model.TotalAmount, "", new { @class = "text-danger" })
                 <input type="button" id="GetTotal" value='Calculate' class="btn btn-info d-inline" />
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Arrived To Stock", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.CheckBox("Done", (Boolean)ViewBag.Done)
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Change Quantity", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.CheckBox("ChangeQuantity", false)
             </div>
         </div>
 
@@ -210,8 +206,8 @@
                             + '<td>' + item.Producer + '</td>'
                             + '<td>' + item.SellingPrice + '</td>'
                             + '<td>' + item.StockQuantity + '</td>'
-                            + '<td><input type="text" value="' + item.PurchasePrice + '" name="PurchasePrice" class ="form-control col" /></td>'
-                            + '<td><input type="number" value="' + item.OrderQuantity + '" name="OrderQuantity" class ="form-control col" /></td>'
+                            + '<td><input type="text" value="' + item.PurchasePrice + '" name="PurchasePrice" class ="form-control col" min="0"/></td>'
+                            + '<td><input type="number" value="' + item.OrderQuantity + '" name="OrderQuantity" class ="form-control col" min="0"/></td>'
                             + '</tr>'
                     })
                     $('.tbody').html(tblhtml);

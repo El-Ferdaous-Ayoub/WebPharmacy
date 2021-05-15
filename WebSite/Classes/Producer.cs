@@ -11,19 +11,17 @@ namespace Classes
     [Table("Producers")]
     public class Producer
     {
-        [Key,Required]
+        [Key]
+        public int ID { get; set; }
         [Display(Name = "Producer")]
         public String Name { get; set; }
         public String Address { get; set; }
         [EmailAddress]
         public String Email { get; set; }
-
-     
-        [Display(Name = "Phone")]
         [DataType(DataType.PhoneNumber)]
         [RegularExpression(@"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$",
             ErrorMessage = "Not a valid phone number")]
-        public String PhoneN { get; set; }
+        public String Phone { get; set; }
 
         public virtual ICollection<Product> Products { get; set; }
     }

@@ -15,16 +15,25 @@ namespace Classes.Models
         public String LastName { get; set; }
         public String Gender { get; set; }
 
-        public void SetInfo(UserModel user)
+        public void SetInfo(Employee user)
         {
             if (user != null)
             {
-                Photo = user.Photo;
+                Photo = user.Picture;
                 NIC = user.NIC;
                 FirstName = user.FirstName;
                 LastName = user.LastName;
                 Gender = user.Gender;
             }
+        }
+
+        public void SetToEmployee(Employee user)
+        {
+            user.Picture = Photo;
+            user.NIC = NIC;
+            user.FirstName = FirstName;
+            user.LastName = LastName;
+            user.Gender = Gender;
         }
     }
 }

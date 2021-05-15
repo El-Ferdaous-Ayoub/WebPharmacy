@@ -10,9 +10,14 @@ namespace BAL
 {
    public class MProducers
     {
+        public Producer Get(int id)
+        {
+            return Get_Data.Get_Producer(id);
+        }
+
         public Producer Get(String Name)
         {
-            return Get_Data.Get_Producer(Name);
+            return Get_Data.Get_Producers().Where(item => item.Name.CompareTo(Name) == 0) .FirstOrDefault();
         }
 
         public List<Producer> Get_All()
@@ -28,43 +33,36 @@ namespace BAL
 
         public void Update(Producer producer)
         {
-            Producer org = Get(producer.Name);
-            if (org == null) throw new Exception($"Producer ({producer.Name}) is Not Exist");
+            Producer org = Get(producer.ID);
+            if (org == null) throw new Exception($"Producer Not Exist");
+            var pr = Get(producer.Name);
+            if (pr != null && pr.ID != org.ID)
+                throw new Exception($"This Producer ({producer.Name}) is Aready Exist");
+
             Management.Detach(org);
             Management.Update(producer);
         }
 
-        public void Delete(String Name)
+        public void Delete(int id)
         {
-            Producer org = Get(Name);
-            if (org == null) throw new Exception($"Producer ({Name}) is Not Exist");
+            Producer org = Get(id);
+            if (org == null) throw new Exception($"Producer Not Exist");
             var mp = new MProducts();
+            var up = Get_All().Where(i => i.Name.CompareTo("Unknown") == 0).First().ID;
             foreach (var item in mp.Get_All())
             {
-                if (item.Producer_Name.CompareTo(Name) == 0)
+                if (item.Producer_ID == id)
                 {
-                    item.Producer_Name = "Unknown";
-                    mp.Update(item);
-                }
-            }
-            Management.Remove(Name);
-        }
-
-        public void NewName(String orgname,Producer producer)
-        {
-            Producer org = Get(orgname);
-            if (org == null) throw new Exception($"Producer ({orgname}) is Not Exist");
-            Add(producer);
-            var mp = new MProducts();
-            foreach (var item in mp.Get_All())
-            {
-                if (item.Producer_Name.CompareTo(orgname) == 0)
-                {
-                    item.Producer_Name = producer.Name;
+                    item.Producer_ID = up;
                     mp.Update(item);
                 }
             }
             Management.Remove(org);
+        }
+
+        public Producer GetUNProducer()
+        {
+            return Get_All().Where(i => i.Name.CompareTo("Unknown") == 0).FirstOrDefault();
         }
     }
 }

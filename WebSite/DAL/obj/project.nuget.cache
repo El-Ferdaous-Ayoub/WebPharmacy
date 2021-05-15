@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "xapbFZsz7sJTLdOYcDDssH1UuxRHUECAr2i785LKFY8vb59YdXolDh/+KV0mqhQH86blSTIszThysMHjirxJdg==",
+  "dgSpecHash": "qI5KnHVPr44M2Sd6BoAnxPriyXwRcHPZenpdPsJI20h+EBRMJEv0QhccDVyySOTsipW8Q4qfJmHAvkB8QAA25w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\HP\\source\\repos\\WebSite\\DAL\\DAL.csproj",
+  "projectFilePath": "D:\\New folder\\WebPharmacy-master\\WebSite\\DAL\\DAL.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.authentication.core\\2.2.0\\microsoft.aspnetcore.authentication.core.2.2.0.nupkg.sha512",

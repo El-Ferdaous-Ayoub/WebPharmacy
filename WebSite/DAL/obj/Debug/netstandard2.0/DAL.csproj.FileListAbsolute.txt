@@ -14,3 +14,19 @@ C:\Users\HP\source\repos\WebSite\DAL\obj\Debug\netstandard2.0\DAL.csproj.CoreCom
 C:\Users\HP\source\repos\WebSite\DAL\obj\Debug\netstandard2.0\DAL.csproj.CopyComplete
 C:\Users\HP\source\repos\WebSite\DAL\obj\Debug\netstandard2.0\DAL.dll
 C:\Users\HP\source\repos\WebSite\DAL\obj\Debug\netstandard2.0\DAL.pdb
+D:\New folder\WebPharmacy-master\WebSite\DAL\bin\Debug\netstandard2.0\DAL.deps.json
+D:\New folder\WebPharmacy-master\WebSite\DAL\bin\Debug\netstandard2.0\DAL.dll
+D:\New folder\WebPharmacy-master\WebSite\DAL\bin\Debug\netstandard2.0\DAL.pdb
+D:\New folder\WebPharmacy-master\WebSite\DAL\bin\Debug\netstandard2.0\Classes.dll
+D:\New folder\WebPharmacy-master\WebSite\DAL\bin\Debug\netstandard2.0\EntityFramework.dll
+D:\New folder\WebPharmacy-master\WebSite\DAL\bin\Debug\netstandard2.0\EntityFramework.SqlServer.dll
+D:\New folder\WebPharmacy-master\WebSite\DAL\bin\Debug\netstandard2.0\Classes.pdb
+D:\New folder\WebPharmacy-master\WebSite\DAL\bin\Debug\netstandard2.0\EntityFramework.xml
+D:\New folder\WebPharmacy-master\WebSite\DAL\bin\Debug\netstandard2.0\EntityFramework.SqlServer.xml
+D:\New folder\WebPharmacy-master\WebSite\DAL\obj\Debug\netstandard2.0\DAL.csprojAssemblyReference.cache
+D:\New folder\WebPharmacy-master\WebSite\DAL\obj\Debug\netstandard2.0\DAL.AssemblyInfoInputs.cache
+D:\New folder\WebPharmacy-master\WebSite\DAL\obj\Debug\netstandard2.0\DAL.AssemblyInfo.cs
+D:\New folder\WebPharmacy-master\WebSite\DAL\obj\Debug\netstandard2.0\DAL.csproj.CoreCompileInputs.cache
+D:\New folder\WebPharmacy-master\WebSite\DAL\obj\Debug\netstandard2.0\DAL.csproj.CopyComplete
+D:\New folder\WebPharmacy-master\WebSite\DAL\obj\Debug\netstandard2.0\DAL.dll
+D:\New folder\WebPharmacy-master\WebSite\DAL\obj\Debug\netstandard2.0\DAL.pdb

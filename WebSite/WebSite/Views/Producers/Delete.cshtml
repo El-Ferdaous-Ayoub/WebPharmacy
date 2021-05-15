@@ -34,25 +34,25 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.PhoneN)
+            @Html.DisplayNameFor(model => model.Phone)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.PhoneN)
+            @Html.DisplayFor(model => model.Phone)
         </dd>
 
     </dl>
     @using (Html.BeginForm())
     {
+        @Html.HiddenFor(model => model.ID)
         @Html.AntiForgeryToken()
 
 <div class="form-actions no-color">
     @if (Model.Name.CompareTo("Unknown") != 0)
     { 
         <input type="submit" value="Delete" class="btnDelete" /> 
-        Html.ActionLink("Edit", "Edit", new { id = Model.Name }, new { @class = "btnEdit" });
+        Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btnEdit" });
     }
-
 <br /><br />
 @Html.ActionLink("  Back to List", "Index", null, new { @class = "LinkBack" })
 </div>
@@ -90,7 +90,7 @@
                             @Html.DisplayFor(modelitem => item.Product_Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelitem => item.Category_Name)
+                            @Html.DisplayFor(modelitem => item.Category.Name)
                         </td>
                         <td>
                             @Html.DisplayFor(modelitem => item.Quantity)

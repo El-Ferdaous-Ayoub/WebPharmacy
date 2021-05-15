@@ -22,9 +22,6 @@
                 @Html.DisplayNameFor(model => model.Time_Work)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Salary)
-            </th>
-            <th>
                 @Html.ActionLink(" ", "Create", null, new { @class = "LinkCreate" })
             </th>
         </tr>
@@ -39,14 +36,11 @@
                     @Html.DisplayFor(modelItem => item.Time_Work)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Salary)
-                </td>
-                <td>
                     @if (item.Title.CompareTo("Unknown") != 0)
                     {
-                        @Html.ActionLink(" ", "Edit", new { id = item.Title }, new { @class = "LinkEdit" })
+                        @Html.ActionLink(" ", "Edit", new { id = item.ID }, new { @class = "LinkEdit" })
                     }
-                    @Html.ActionLink(" ", "Delete", new { id = item.Title }, new { @class = "LinkMore" })
+                    @Html.ActionLink(" ", "Delete", new { id = item.ID }, new { @class = "LinkMore" })
                 </td>
             </tr>
         }

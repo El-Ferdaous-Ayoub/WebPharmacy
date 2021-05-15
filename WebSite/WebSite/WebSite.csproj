@@ -251,7 +251,6 @@
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\CheckController.cs" />
     <Compile Include="Controllers\ContractsController.cs" />
-    <Compile Include="Controllers\ContractTypesController.cs" />
     <Compile Include="Controllers\DepartmentsController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -264,6 +263,7 @@
     </Compile>
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\Config.cs" />
+    <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -2164,10 +2164,6 @@
     <Content Include="Views\Products\Edit.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Orders\Edit.cshtml" />
-    <Content Include="Views\ContractTypes\Index.cshtml" />
-    <Content Include="Views\ContractTypes\Create.cshtml" />
-    <Content Include="Views\ContractTypes\Edit.cshtml" />
-    <Content Include="Views\ContractTypes\Delete.cshtml" />
     <Content Include="Views\Contracts\Create.cshtml" />
     <Content Include="Views\Contracts\Edit.cshtml" />
     <Content Include="Views\Contracts\Delete.cshtml" />
@@ -2185,10 +2181,7 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Logout.cshtml" />
     <Content Include="Views\Orders\Create.cshtml" />
-    <Content Include="Views\Account\EditUserName.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
-    <Content Include="Views\Account\EditPersonalInfo.cshtml" />
-    <Content Include="Views\Account\EditContact.cshtml" />
     <Content Include="Views\Contracts\Index.cshtml" />
     <Content Include="Views\Account\UserProfile.cshtml" />
   </ItemGroup>

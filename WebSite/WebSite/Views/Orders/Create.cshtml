@@ -23,7 +23,7 @@
                         Picture
                     </th>
                     <th>
-                        Prduct Name
+                        Product Name
                     </th>
                     <th>
                         Producer
@@ -56,7 +56,7 @@
                         Picture
                     </th>
                     <th>
-                        Prduct Name
+                        Product Name
                     </th>
                     <th>
                         Producer
@@ -117,19 +117,6 @@
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.Label("Arrived To Stock", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.CheckBox("Done", false)
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Change Quantity", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.CheckBox("ChangeQuantity", false)
-            </div>
-        </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -209,8 +196,8 @@
                             + '<td>' + item.Producer + '</td>'
                             + '<td>' + item.SellingPrice + '</td>'
                             + '<td>' + item.StockQuantity + '</td>'
-                            + '<td><input type="text" value="' + item.PurchasePrice + '" name="PurchasePrice" class ="form-control col" /></td>'
-                            + '<td><input type="number" value="' + item.OrderQuantity + '" name="OrderQuantity" class ="form-control col" /></td>'
+                            + '<td><input type="text" value="' + item.PurchasePrice + '" name="PurchasePrice" class ="form-control col" min="0"/></td>'
+                            + '<td><input type="number" value="' + item.OrderQuantity + '" name="OrderQuantity" class ="form-control col" min="0"/></td>'
                             + '</tr>'
                     })
                     $('.tbody').html(tblhtml);

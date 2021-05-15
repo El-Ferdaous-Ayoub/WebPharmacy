@@ -7,3 +7,11 @@ C:\Users\HP\source\repos\WebSite\Classes\obj\Debug\netstandard2.0\Classes.csproj
 C:\Users\HP\source\repos\WebSite\Classes\obj\Debug\netstandard2.0\Classes.dll
 C:\Users\HP\source\repos\WebSite\Classes\obj\Debug\netstandard2.0\Classes.pdb
 C:\Users\HP\source\repos\WebSite\Classes\obj\Debug\netstandard2.0\Classes.csprojAssemblyReference.cache
+D:\New folder\WebPharmacy-master\WebSite\Classes\bin\Debug\netstandard2.0\Classes.deps.json
+D:\New folder\WebPharmacy-master\WebSite\Classes\bin\Debug\netstandard2.0\Classes.dll
+D:\New folder\WebPharmacy-master\WebSite\Classes\bin\Debug\netstandard2.0\Classes.pdb
+D:\New folder\WebPharmacy-master\WebSite\Classes\obj\Debug\netstandard2.0\Classes.AssemblyInfoInputs.cache
+D:\New folder\WebPharmacy-master\WebSite\Classes\obj\Debug\netstandard2.0\Classes.AssemblyInfo.cs
+D:\New folder\WebPharmacy-master\WebSite\Classes\obj\Debug\netstandard2.0\Classes.csproj.CoreCompileInputs.cache
+D:\New folder\WebPharmacy-master\WebSite\Classes\obj\Debug\netstandard2.0\Classes.dll
+D:\New folder\WebPharmacy-master\WebSite\Classes\obj\Debug\netstandard2.0\Classes.pdb

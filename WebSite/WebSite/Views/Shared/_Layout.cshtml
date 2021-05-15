@@ -46,7 +46,7 @@
 
                 if (WebSite.Models.Account.Department.Departments
                     || WebSite.Models.Account.Department.Employees
-                    || WebSite.Models.Account.Department.ContractTypes)
+                    || WebSite.Models.Account.Department.Contracts)
                 {
                     <li>
                         <!-- Divider -->
@@ -75,7 +75,7 @@
                             </a>
                         </li>
                     }
-                    if (WebSite.Models.Account.Department.ContractTypes)
+                    if (WebSite.Models.Account.Department.Contracts)
                     {
                         <li class="nav-item">
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Contracts" aria-expanded="true" aria-controls="collapseUtilities">
@@ -84,7 +84,6 @@
                             </a>
                             <div id="Contracts" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
                                 <div class="bg-white py-2 collapse-inner rounded">
-                                    <a class="collapse-item" href="/ContractTypes">Types</a>
                                     <a class="collapse-item" href="/Contracts">Employee Contract</a>
                                 </div>
                             </div>
@@ -183,9 +182,9 @@
                         {
 
                             String img = "PNG/User.png";
-                            if (!String.IsNullOrEmpty(WebSite.Models.Account.User.Photo))
+                            if (!String.IsNullOrEmpty(WebSite.Models.Account.User.Picture))
                             {
-                                img = "Images/Users/" + WebSite.Models.Account.User.Photo;
+                                img = "Images/Users/" + WebSite.Models.Account.User.Picture;
                             }
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

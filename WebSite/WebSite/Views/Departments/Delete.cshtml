@@ -1,4 +1,4 @@
-﻿@model Classes.Models.DepartmentModel
+﻿@model Classes.Department
 
 @{
     ViewBag.Title = "Delete";
@@ -26,31 +26,23 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Salary)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Salary)
-        </dd>
-
-        <dt>
             Access
         </dt>
 
         <dd>
             <ul class="list-group list-group-flush">
-                @foreach (System.Reflection.PropertyInfo prop in typeof(Classes.Models.DepartmentModel).GetProperties())
+                @foreach (System.Reflection.PropertyInfo prop in typeof(Classes.Department).GetProperties())
                 {
                     if (prop.PropertyType == typeof(Boolean))
                     {
                         if (((Boolean)prop.GetValue(Model)))
                         {
-                <li class="list-group-item">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" checked disabled="disabled">
-                        <label class="custom-control-label">@prop.Name</label>
-                    </div>
-                </li>
+                            <li class="list-group-item">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" checked disabled="disabled">
+                                    <label class="custom-control-label">@prop.Name</label>
+                                </div>
+                            </li>
                         }
                     }
                 }
@@ -61,7 +53,7 @@
 
     @using (Html.BeginForm()) {
         @Html.AntiForgeryToken()
-
+    @Html.HiddenFor(model => model.ID)
 <div class="form-actions no-color">
     <input type="submit" value="Delete" class="btnDelete" />
     <br /><br />

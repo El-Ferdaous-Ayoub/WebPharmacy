@@ -7,19 +7,16 @@ namespace Classes
     [Table("Contracts")]
     public class Contract
     {
-        [Key,Required]
+        [Key]
+        public int ID { get; set; }
         [Display(Name = "Employee NIC")]
-        public String Employee_NIC { get; set; }
+        public int Employee_ID { get; set; }
         [Display(Name = "Contract Type")]
         public  String Type { get; set; }
-        [Display(Name = "Start")]
         public  DateTime Start { get; set; }
-        [Display(Name = "End")]
-        public  DateTime End { get; set; }
         public  String Document { get; set; }
-        
 
-        public virtual Contract_Type Contrat_Type { get; set; }
+        [ForeignKey("Employee_ID")]
         public virtual Employee Employee { get; set; }
 
     }

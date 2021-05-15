@@ -18,12 +18,7 @@
             <td>
                 <input type="text" name="ID" value="" placeholder="ID or Product Name..." class="form-control" />
             </td>
-            <td>
-                @Html.DropDownList("Producer_Name", null, htmlAttributes: new { @class = "form-control" })
-            </td>
-            <td>
-                @Html.DropDownList("Category_Name", null, htmlAttributes: new { @class = "form-control" })
-            </td>
+
             <td>
                 <button class="btn btn-success" style="height:5vh"><i class="fa fa-search" aria-hidden="true"></i></button>
             </td>
@@ -54,9 +49,6 @@
             <th>
                 Quantity
             </th>
-            <th>
-                Discount
-            </th>
             <th>  @Html.ActionLink(" ", "Create", null, new { @class = "LinkCreate" })</th>
         </tr>
 
@@ -73,22 +65,22 @@
                     @Html.DisplayFor(modelItem => item.Product_Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Producer_Name)
+                    @if (item.Producer != null)
+                    {
+                        @Html.DisplayFor(modelItem => item.Producer.Name)
+                    }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Category_Name)
+                    @if (item.Category != null)
+                    {
+                        @Html.DisplayFor(modelItem => item.Category.Name)
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Quantity)
-                </td>
-                <td>
-                    @{
-                        var d = item.Discount * 100;
-                    }
-                    <text>@d%</text>
                 </td>
                 <td>
                     @Html.ActionLink(" ", "Edit", new { id = item.ID }, new { @class = "LinkEdit" })

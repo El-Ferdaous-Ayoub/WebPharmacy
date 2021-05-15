@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "A64KhEEqn0xwdZewEm3PKoNg0Zxa6VGELlA0OZpQvrbfWObXHM6QjJnWpR5WXyVATi7uR93usv6/AdLl2DOeow==",
+  "dgSpecHash": "nnRvsXHVtUfAM63KZsIB3UNt9EgZUPmCSR/VWp3tWwcfm1V5PDPN9pcWzpCmq7QVWEYmbHTDQhQ8+2wlpZJUJA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\HP\\source\\repos\\WebSite\\BAL\\BAL.csproj",
+  "projectFilePath": "D:\\New folder\\WebPharmacy-master\\WebSite\\BAL\\BAL.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.authentication.core\\2.2.0\\microsoft.aspnetcore.authentication.core.2.2.0.nupkg.sha512",

@@ -26,7 +26,7 @@
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PhoneN)
+                @Html.DisplayNameFor(model => model.Phone)
             </th>
             <th>
                 @Html.ActionLink(" ", "Create", null, new { @class = "LinkCreate" })
@@ -46,14 +46,14 @@
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.PhoneN)
+                    @Html.DisplayFor(modelItem => item.Phone)
                 </td>
                 <td>
                     @if (item.Name.CompareTo("Unknown") != 0)
                     {
-                        @Html.ActionLink(" ", "Edit", new { id = item.Name }, new { @class = "LinkEdit" })
-                    }
-                    @Html.ActionLink(" ", "Delete", new { id = item.Name }, new { @class = "LinkMore" })
+                @Html.ActionLink(" ", "Edit", new { id = item.ID }, new { @class = "LinkEdit" })
+                        @Html.ActionLink(" ", "Delete", new { id = item.ID }, new { @class = "LinkMore" })}
+
                 </td>
             </tr>
         }

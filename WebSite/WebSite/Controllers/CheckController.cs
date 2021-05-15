@@ -25,29 +25,20 @@ namespace WebSite.Controllers
             {
                 try
                 {
-                    User user = new MUsers().Login(Account.User.UserName, Account.User.Password);
+                    Employee user = new MAccounts().Login(Account.User.NIC, Account.User.Password);
                     if (user == null || String.IsNullOrEmpty(user.NIC)) throw new Exception();
-                    Employee employee = new MEmployees().Get(user.NIC);
+                    Employee employee = new MEmployees().Get(user.ID);
                     if (employee == null) throw new Exception();
-                    if (String.IsNullOrEmpty(employee.Department_Title)) throw new Exception();
-                    Department department = new MDepartments().Get(employee.Department_Title);
+                    Department department = new MDepartments().Get(employee.Department_ID);
                     if (department == null) throw new Exception();
-                    Role role = new MDepartments().GetRole(employee.Department_Title);
-                    if (role == null) throw new Exception();
-                    UserModel userModel = new UserModel();
-                    userModel.SetUser(user);
-                    userModel.SetEmployee(employee);
-                    DepartmentModel departmentModel = new DepartmentModel();
-                    departmentModel.SetDepartment(department);
-                    departmentModel.SetRole(role);
-                    Config.LogIn(userModel, departmentModel);
+                    Config.LogIn(employee, department);
                 }
                 catch
                 {
                     return RedirectToRoute(new { controller = "Account", action = "Logout" });
                 }   
-                foreach (System.Reflection.PropertyInfo prop in typeof(DepartmentModel).GetProperties())
-                if (prop.PropertyType == typeof(Boolean) && prop.Name.CompareTo(Access) == 0 && (Boolean)prop.GetValue(Account.Department))
+                foreach (System.Reflection.PropertyInfo prop in typeof(Department).GetProperties())
+                if (prop.PropertyType == typeof(Boolean) && (Boolean)prop.GetValue(Account.Department))
                     return null;
             }
             return RedirectToRoute(new { controller = "Home", action = "Index" });

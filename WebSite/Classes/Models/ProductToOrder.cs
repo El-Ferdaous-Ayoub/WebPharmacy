@@ -14,8 +14,8 @@ namespace Classes.Models
             ID = product.ID;
             Image = product.Picture;
             Name = product.Product_Name;
-            Category = product.Category_Name;
-            Producer = product.Producer_Name;
+            Category = product.Category.Name;
+            Producer = product.Producer.Name;
             SellingPrice = product.Price;
             StockQuantity = product.Quantity;
             PurchasePrice = 0;
@@ -27,8 +27,8 @@ namespace Classes.Models
             ID = product.ID;
             Image = product.Picture;
             Name = product.Product_Name;
-            Category = product.Category_Name;
-            Producer = product.Producer_Name;
+            Category = product.Category.Name;
+            Producer = product.Producer.Name;
             SellingPrice = product.Price;
             StockQuantity = product.Quantity;
             PurchasePrice = 0;

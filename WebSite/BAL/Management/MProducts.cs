@@ -38,6 +38,11 @@ namespace BAL
         {
             Product org = Get(ID);
             if (org == null) throw new Exception($"Product ({ID}) is Not Exist");
+            var odb = new MOrders();
+            foreach (var item in odb.GetOIs_ByProduct(ID))
+            {
+                Management.Remove(item);
+            }
             Management.Remove(org);
         }
     }

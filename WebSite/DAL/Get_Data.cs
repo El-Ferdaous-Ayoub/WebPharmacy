@@ -4,144 +4,115 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Classes;
+
 namespace DAL
 {
-    public class Get_Data
+    public static class Get_Data
     {
-        public static Category Get_Category(String Name)
+        public static Category Get_Category(int ID)
         {
-            return Initial_Context.db.Categories.Where(i => i.Name.CompareTo(Name) == 0).FirstOrDefault();
+            return InitialContext.db.Categories.Where(i => i.ID == ID).FirstOrDefault();
         }
 
-        public static Producer Get_Producer(String Name)
+        public static Producer Get_Producer(int ID)
         {
-            return Initial_Context.db.Producers.Where(i => i.Name.CompareTo(Name) == 0).FirstOrDefault();
+            return InitialContext.db.Producers.Where(i => i.ID == ID).FirstOrDefault();
         }
 
         public static Product Get_Product(String ID)
         {
-            return Initial_Context.db.Products.Where(i => i.ID.CompareTo(ID) == 0).FirstOrDefault();
+            return InitialContext.db.Products.Where(i => i.ID == ID).FirstOrDefault();
         }
 
         public static Order Get_Order(String ID)
         {
-            return Initial_Context.db.Orders.Where(i => i.ID.CompareTo(ID) == 0).FirstOrDefault();
+            return InitialContext.db.Orders.Where(i => i.ID == ID).FirstOrDefault();
         }
 
-        public static Contract Get_Contract(String NIC)
+        public static Contract Get_Contract(int ID)
         {
-            return Initial_Context.db.Contracts.Where(i => i.Employee_NIC.CompareTo(NIC) == 0).FirstOrDefault();
+            return InitialContext.db.Contracts.Where(i => i.ID == ID).FirstOrDefault();
         }
 
-        public static Contract_Type Get_Contract_Type(String Title)
+        public static Department Get_Department(int ID)
         {
-            return Initial_Context.db.Contract_Types.Where(i => i.Title.CompareTo(Title) == 0).FirstOrDefault();
+            return InitialContext.db.Departments.Where(i => i.ID == ID ).FirstOrDefault();
         }
 
-        public static Department Get_Department(String Title)
+        public static Employee Get_Employee(int ID)
         {
-            return Initial_Context.db.Departments.Where(i => i.Title.CompareTo(Title) == 0).FirstOrDefault();
+            return InitialContext.db.Employees.Where(i => i.ID == ID).FirstOrDefault();
         }
 
-        public static Employee Get_Employee(String NIC)
+        public static Employee GetEmployeeByNIC(String NIC)
         {
-            return Initial_Context.db.Employees.Where(i => i.ID.CompareTo(NIC) == 0).FirstOrDefault();
-        }
-
-        public static User GetUserByNIC(String NIC)
-        {
-            return Initial_Context.db.Users.Where(i => i.NIC.CompareTo(NIC) == 0).FirstOrDefault();
-        }
-
-        public static User Get_User(String UserName)
-        {
-            return Initial_Context.db.Users.Where(i => i.UserName.CompareTo(UserName) == 0).FirstOrDefault();
+            return InitialContext.db.Employees.Where(i => i.NIC.CompareTo(NIC) == 0).FirstOrDefault();
         }
 
         public static List<Category> Get_Categories()
         {
-            return Initial_Context.db.Categories.ToList();
+            return InitialContext.db.Categories.ToList();
         }
         public static List<Producer> Get_Producers()
         {
-            return Initial_Context.db.Producers.ToList();
+            return InitialContext.db.Producers.ToList();
         }
         public static List<Product> Get_Products()
         {
-            return Initial_Context.db.Products.ToList();
+            return InitialContext.db.Products.ToList();
         }
         public static List<Order> Get_Orders()
         {
-            return Initial_Context.db.Orders.ToList();
+            return InitialContext.db.Orders.ToList();
         }
 
         public static List<Contract> Get_Contracts()
         {
-            return Initial_Context.db.Contracts.ToList();
-        }
-
-        public static List<Contract_Type> Get_Contract_Types()
-        {
-            return Initial_Context.db.Contract_Types.ToList();
+            return InitialContext.db.Contracts.ToList();
         }
 
         public static List<Employee> Get_Employees()
         {
-            return Initial_Context.db.Employees.ToList();
-        }
-
-        public static List<User> Get_Users()
-        {
-            return Initial_Context.db.Users.ToList();
+            return InitialContext.db.Employees.ToList();
         }
 
         public static List<Department> Get_Departments()
         {
-            return Initial_Context.db.Departments.ToList();
+            return InitialContext.db.Departments.ToList();
         }
 
-        public static User Login(String UserName,String Password)
+        public static Employee Login(String UserName,String Password)
         {
-            return Initial_Context.db.Users.Where(item => (item.UserName.CompareTo(UserName) == 0 ||
+            return InitialContext.db.Employees.Where(item => (item.NIC.CompareTo(UserName) == 0 ||
             (!String.IsNullOrEmpty(item.Email) && item.Email.CompareTo(UserName) == 0))
             && item.Password.CompareTo(Password) == 0).FirstOrDefault();
         }
 
-        public static OrderInfo GetOrderInfo(String Order,String Product)
+        public static OrderInfo GetOrderInfo(string oid,string pid)
         {
-            return Initial_Context.db.ProductsOrder.Where(item =>
-            item.Product_ID.CompareTo(Product) == 0 &&
-            item.Order_ID.CompareTo(Order) == 0).FirstOrDefault();
+            return InitialContext.db.ProductsOrder.Where(item =>
+            item.Order_ID.CompareTo(oid) == 0
+            && item.Product_ID.CompareTo(pid) == 0).FirstOrDefault();
         }
 
         public static List<OrderInfo> GetOIs_ByOrder(String OrderID)
         {
-            return Initial_Context.db.ProductsOrder.Where(item => item.Order_ID.CompareTo(OrderID) == 0).ToList();
+            return InitialContext.db.ProductsOrder.Where(item => item.Order_ID.CompareTo(OrderID) == 0).ToList();
         }
 
         public static List<OrderInfo> GetOIs_ByProduct(String Product)
         {
-            return Initial_Context.db.ProductsOrder.Where(item => item.Product_ID.CompareTo(Product) == 0).ToList();
+            return InitialContext.db.ProductsOrder.Where(item => item.Product_ID.CompareTo(Product) == 0).ToList();
         }
 
         public static List<OrderInfo> GetAllOrdersInfo()
         {
-            return Initial_Context.db.ProductsOrder.ToList();
-        }
-
-        public static OrderDone GetOrderDone(String ID)
-        {
-            return Initial_Context.db.OrdersDone.Where(item => item.ID.CompareTo(ID) == 0).FirstOrDefault();
-        }
-
-        public static Role GetRole(String Department)
-        {
-            return Initial_Context.db.Roles.Where(item => item.Department_Title.CompareTo(Department) == 0).FirstOrDefault();
+            return InitialContext.db.ProductsOrder.ToList();
         }
 
         public static Pharmacy GetPharmacy()
         {
-            return Initial_Context.db.Pharmacy.FirstOrDefault();
+            return InitialContext.db.Pharmacy.FirstOrDefault();
         }
     }
 }

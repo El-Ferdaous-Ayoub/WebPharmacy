@@ -9,13 +9,13 @@ using Classes.Models;
 using WebSite.Models;
 using System.Text.RegularExpressions;
 using System.Data.Entity.Validation;
+using System.IO;
 
 namespace WebSite.Controllers
 {
     public class AccountController : Controller
     {
-        private MEmployees edb = new MEmployees();
-        private MUsers udb = new MUsers();
+        private MEmployees db = new MEmployees();
 
         public ActionResult Login()
         {
@@ -32,23 +32,11 @@ namespace WebSite.Controllers
                 return RedirectToRoute(new { controller = "Home", action = "Index" });
             try
             {
-                User user = new MUsers().Login(login.UserName, login.Password);
-                if (user == null) throw new Exception("UserName Or Password Is Incorrect");
-                if (String.IsNullOrEmpty(user.NIC)) throw new Exception("NIC of User does not exist");
-                Employee employee = new MEmployees().Get(user.NIC);
-                if (employee == null) throw new Exception("This User does not have the access");
-                if (String.IsNullOrEmpty(employee.Department_Title)) throw new Exception("This User does not have an access");
-                Department department = new MDepartments().Get(employee.Department_Title);
-                if (department == null) throw new Exception("This User does not have the access");
-                Role role = new MDepartments().GetRole(employee.Department_Title);
-                if (role == null) throw new Exception("This User does not have the access");
-                UserModel userModel = new UserModel();
-                userModel.SetUser(user);
-                userModel.SetEmployee(employee);
-                DepartmentModel departmentModel = new DepartmentModel();
-                departmentModel.SetDepartment(department);
-                departmentModel.SetRole(role);
-                Config.LogIn(userModel,departmentModel);
+                Employee user = new MAccounts().Login(login.UserName, login.Password);
+                if (user == null) throw new Exception("Username Or Password Is Incorrect");
+                Department department = new MDepartments().Get(user.Department_ID);
+                if (department == null) throw new Exception("You doesn't have the access");
+                Config.LogIn(user,department);
                 return RedirectToRoute(new { controller = "Home", action = "Index" });
             }
             catch (Exception ex)
@@ -68,76 +56,76 @@ namespace WebSite.Controllers
         {
             if (Account.User == null)
                 return RedirectToAction("Login");
-            return View(Account.User);
-        }
-
-        public ActionResult EditUserName()
-        {
-            if (Account.User == null)
-                return RedirectToAction("Login");
-            UserName username = new UserName() {Username = Account.User.UserName };
-            return View(username);
+            Employee em = db.GetByNIC(Account.User.NIC);
+            em.Department = new MDepartments().Get(em.Department_ID) ;
+            return View(em);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditUserName(String NewUsername)
+        public ActionResult UserProfile(Employee user, HttpPostedFileBase ImageUrl)
         {
             if (Account.User == null)
-                return RedirectToAction("Logout");
+                return RedirectToAction("Login");
             try
-            { 
+            {
+                
+                if (db.GetByNIC(Account.User.NIC) == null)
+                    return RedirectToAction("Login");
 
-                User user = udb.Get(Account.User.UserName);
-                if (user == null)
-                    return RedirectToAction("Logout");
-                if (ModelState.IsValid)
+                if (ImageUrl != null)
                 {
-                    User newuser = user.GetUser();
-                    newuser.UserName = NewUsername;
-                    udb.Add(newuser);
-                    udb.NewUserName(user.UserName, NewUsername);
-                    user = udb.Get(NewUsername);
-                    Account.User.SetUser(user);
-                    Employee employee = edb.Get(user.NIC);
-                    if(employee != null)
-                    Account.User.SetEmployee(employee);
-                    return RedirectToAction("UserProfile");
+                    if (System.IO.File.Exists($"~/Content/Images/Users/{user.Picture}"))
+                        System.IO.File.Delete($"~/Content/Images/Users/{user.Picture}");
+
+                    var str = "";
+                    string ImageName = Path.GetFileName(ImageUrl.FileName);
+                    do
+                    {
+                        str = GetName();
+                    } while (System.IO.File.Exists($"~/Content/Images/Users/{str}{ImageName}"));
+                    string physicalPath = Server.MapPath($"~/Content/Images/Users/{str}{ImageName}");
+                    ImageUrl.SaveAs(physicalPath);
+                    user.Picture = $"{str}{ImageName}";
                 }
+                db.Update(user);
+                Account.User = new Employee();
+                Account.User = db.GetByNIC(user.NIC);
+                return RedirectToAction("UserProfile");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("",ex.Message);
+                ModelState.AddModelError("", ex.Message);
             }
-            return RedirectToAction("EditUserName");
+            return View(user);
         }
 
         public ActionResult ChangePassword()
         {
             if (Account.User == null)
                 return RedirectToAction("Login");
-            return View();
+            return View(new PassWord());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ChangePassword(String Password,String NewPassword)
+        public ActionResult ChangePassword(PassWord passWord)
         {
             if (Account.User == null)
                 return RedirectToAction("Login");
             try
             {
-                User user = udb.Get(Account.User.UserName);
+                Employee user = db.Get(Account.User.ID);
                 if (user == null)
                     return RedirectToAction("Login");
-                if (Password.CompareTo(user.Password) != 0)
+                if (Account.User.Password.CompareTo(passWord.Password) != 0)
                     throw new Exception("Password Is Incorrect");
                 Regex regex = new Regex(@"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$");
-                if(!regex.IsMatch(NewPassword))
+                if(!regex.IsMatch(passWord.NewPassword))
                     throw new Exception("Password is not sufficiently complex");
-                user.Password = NewPassword;
-                    udb.Update(user);
-                Account.User.SetUser(udb.Get(user.UserName));
+                user.Password = passWord.NewPassword;
+                    db.Update(user);
+                Account.User.Password = passWord.NewPassword;
                 return RedirectToAction("UserProfile");
             }
             catch (Exception ex)
@@ -147,89 +135,12 @@ namespace WebSite.Controllers
             return View();
         }
 
-        public ActionResult EditPersonalInfo()
+        public String GetName()
         {
-            if (Account.User == null)
-                return RedirectToAction("Login");
-            UserInfo info = new UserInfo();
-            info.SetInfo(Account.User);
-            return View(info);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditPersonalInfo(UserInfo info, HttpPostedFileBase ImageUrl)
-        {
-            if (Account.User == null)
-                return RedirectToAction("Login");
-            try
-            {
-                User user = udb.Get(Account.User.UserName);
-                if (user == null)
-                    return RedirectToAction("Login");
-
-                if (Account.Department != null && user.NIC.CompareTo(info.NIC) != 0)
-                {
-                    Employee employee = edb.Get(user.NIC);
-                    if (employee != null)
-                    {
-                        Employee newnic = employee.GetEmployee();
-                        newnic.ID = info.NIC;
-                        edb.NewNIC(user.NIC, newnic);
-                    }
-                }
-                User up_user = user.GetUser();
-                up_user.SetInfo(info);
-                if (ImageUrl != null)
-                {
-                    string ImageName = System.IO.Path.GetFileName(ImageUrl.FileName);
-                    string physicalPath = Server.MapPath("~/Content/Images/Users/" + user.UserName + ImageName);
-                    ImageUrl.SaveAs(physicalPath);
-                    up_user.Photo = user.UserName + ImageName;
-                }
-                udb.Update(up_user);
-                Account.User.SetUser(udb.Get(up_user.UserName));
-                return RedirectToAction("UserProfile");
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-            }
-            return View(info);
-        }
-
-        public ActionResult EditContact()
-        {
-            if (Account.User == null)
-                return RedirectToAction("Login");
-            Contact contact = new Contact();
-            contact.SetInfo(Account.User);
-            return View(contact);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditContact(Contact contact)
-        {
-            if (Account.User == null)
-                return RedirectToAction("Login");
-            try
-            {
-                User user = udb.Get(Account.User.UserName);
-                if (user == null)
-                    return RedirectToAction("Login");
-                
-                    user.SetContact(contact);
-                    udb.Update(user);
-                    Account.User.SetUser(udb.Get(user.UserName));
-                    return RedirectToAction("UserProfile");
-                
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-            }
-            return View(contact);
+            Random random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, 20)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }

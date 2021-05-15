@@ -33,7 +33,6 @@ namespace BAL
 
         public String GetNewID()
         {
-            
             String ID = "";
             ID += DateTime.Now.Date.Year;
             ID += DateTime.Now.Date.Month;
@@ -42,7 +41,7 @@ namespace BAL
             return ID;
         }
 
-        public void Add(Order order,List<OrderInfo> OrderInfo,Boolean Done,Boolean ChangeQuantity)
+        public void Add(Order order,List<OrderInfo> OrderInfo)
         {
             do
             {
@@ -59,81 +58,53 @@ namespace BAL
                     Quantity = item.Quantity
                 });
 
-                if (Done && ChangeQuantity)
-                {
-                    Product product = Get_Data.Get_Product(item.Product_ID);
-                    product.Quantity += item.Quantity;
-                    new MProducts().Update(product);
-                }
+                Product product = Get_Data.Get_Product(item.Product_ID);
+                product.Quantity += item.Quantity;
+                new MProducts().Update(product);
             }
-            Management.Add(new OrderDone() { ID = order.ID, ArrivedToStock = Done ,QuantityChanged = ChangeQuantity});
         }
 
-        public void Update(Order order, List<OrderInfo> OrderInfo,Boolean Done ,Boolean ChangeQuantity)
+        public void Update(Order order, List<OrderInfo> OrderInfo)
         {
             Order org = Get(order.ID);
             if (org == null) throw new Exception($"Order ({order.ID}) is Not Exist");
             var orgOIs = Get_Data.GetOIs_ByOrder(order.ID);
-            var orderdone = Get_Data.GetOrderDone(org.ID);
-            if (orderdone == null)
-            {
-                orderdone = new OrderDone()
-                {
-                    ID = order.ID,
-                    ArrivedToStock = false,
-                    QuantityChanged = false
-                };
-                Management.Add(orderdone);
-            }
+
+            var uc = new MCategories().GetUNCategory().ID;
+            var up = new MProducers().GetUNProducer().ID;
+
             foreach (var item in orgOIs)
-            {
-                var pi = OrderInfo.Where(i => i.Product_ID.CompareTo(item.Product_ID) == 0).FirstOrDefault();
+            { 
+                var ori = Get_Data.GetOrderInfo(item.Order_ID, item.Product_ID);
+                var pi = OrderInfo.Where(i => i.Product_ID == item.Product_ID).FirstOrDefault();
                 var product = Get_Data.Get_Product(item.Product_ID);
 
-                if (product == null)
+                if (pi != null)
                 {
-                     product = new Product()
+                    pi.ID = ori.ID;
+                    pi.Order_ID = order.ID;
+                    if (pi.Quantity != item.Quantity)
                     {
-                        ID = item.Product_ID,
-                        Picture = "",
-                        Product_Name = "",
-                        Quantity = 0,
-                        Price = 0,
-                        Category_Name = "Unknown",
-                        Producer_Name = "Unknown"
-                    };
-                    new MProducts().Add(product);
+                        if (pi.Quantity > item.Quantity)
+                            product.Quantity += (pi.Quantity - item.Quantity);
+                        else if (pi.Quantity < item.Quantity)
+                            product.Quantity -= (item.Quantity - pi.Quantity);
+                        if (product.Quantity < 0)
+                            product.Quantity = 0;
+
+                        Management.Detach(ori);
+                        Management.Update(pi);
+                    }
                 }
-
-                if (orderdone.QuantityChanged)
+                else
                 {
-                    if (product.Quantity - item.Quantity >= 0)
-                        product.Quantity -= item.Quantity;
-                    else product.Quantity = 0;
-                }
-
-                if (pi != null && orderdone.ArrivedToStock && ChangeQuantity)
-                {
-                    product.Quantity += pi.Quantity;
-                    pi.ID = item.ID;
-                    pi.Order_ID = item.Order_ID;
-                }
-
-                new MProducts().Update(product);
-
-                if (pi == null)
-                {
+                    product.Quantity -= item.Quantity;
                     Management.Remove(item);
-                    continue;
                 }
-                Management.Detach(item);
-                Management.Update(pi);
+                new MProducts().Update(product);
             }
-
-            foreach (var item in OrderInfo)
+            foreach (var item in OrderInfo.Where(i=> String.IsNullOrEmpty(i.Order_ID)).ToList())
             {
-                if (orgOIs.Where(i => i.Product_ID.CompareTo(item.Product_ID) == 0).FirstOrDefault() != null)
-                    continue;
                 Management.Add(new OrderInfo()
                 {
                     Order_ID = order.ID,
@@ -142,23 +113,10 @@ namespace BAL
                     Quantity = item.Quantity
                 });
 
-                if (Done && ChangeQuantity)
-                {
-                    Product product = Get_Data.Get_Product(item.Product_ID);
-                    product.Quantity += item.Quantity;
-                    new MProducts().Update(product);
-                }
+                Product product = Get_Data.Get_Product(item.Product_ID);
+                product.Quantity += item.Quantity;
+                new MProducts().Update(product);
             }
-
-            if (Done)
-            {
-                orderdone.ArrivedToStock = Done;
-                orderdone.QuantityChanged = ChangeQuantity;
-                Management.Detach(Get_Data.GetOrderDone(org.ID));
-                Management.Update(orderdone);
-            }
-            Management.Detach(org);
-            Management.Update(order);
         }
 
         public void Delete(String ID,Boolean ChangeQuantity)
@@ -166,28 +124,21 @@ namespace BAL
             Order org = Get(ID);
             if (org == null) throw new Exception($"Order ({ID}) is Not Exist");
             var ordersinfo = Get_Data.GetOIs_ByOrder(ID).ToList();
-            var orderdone = Get_Data.GetOrderDone(org.ID);
             foreach (var item in ordersinfo)
             {
-                if (orderdone != null &&
-                    orderdone.ArrivedToStock && orderdone.QuantityChanged)
+                if (ChangeQuantity)
                 {
-                    if (ChangeQuantity)
+                    var product = Get_Data.Get_Product(item.Product_ID);
+                    if (product != null)
                     {
-                        var product = Get_Data.Get_Product(item.Product_ID);
-                        if (product != null)
-                        {
-                            if (product.Quantity - item.Quantity >= 0)
-                                product.Quantity -= item.Quantity;
-                            else product.Quantity = 0;
-                            new MProducts().Update(product);
-                        }
+                        product.Quantity -= item.Quantity;
+                        if (product.Quantity < 0)
+                            product.Quantity = 0;
+                        new MProducts().Update(product);
                     }
                 }
                 Management.Remove(item);
             }
-            if (orderdone != null)
-                Management.Remove(orderdone);
             Management.Remove(org);
         }
 
@@ -196,9 +147,9 @@ namespace BAL
             return Get_Data.GetOIs_ByOrder(OrderID).ToList();
         }
 
-        public OrderDone IsDone(String ID)
+        public List<OrderInfo> GetOIs_ByProduct(String PID)
         {
-            return Get_Data.GetOrderDone(ID);
+            return Get_Data.GetOIs_ByProduct(PID).ToList();
         }
     }
 }

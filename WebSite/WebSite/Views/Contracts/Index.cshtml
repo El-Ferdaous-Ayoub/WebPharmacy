@@ -10,16 +10,13 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Employee_NIC)
+            @Html.DisplayNameFor(model => model.Employee)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Type)
+            Contract
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Start)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.End)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Document)
@@ -32,7 +29,7 @@
 @foreach (var item in Model) {
 <tr>
     <th>
-        @Html.DisplayFor(modelItem => item.Employee_NIC)
+        @Html.DisplayFor(modelItem => item.Employee.NIC)
     </th>
     <td>
         @Html.DisplayFor(modelItem => item.Type)
@@ -41,14 +38,11 @@
         @Html.DisplayFor(modelItem => item.Start)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => item.End)
-    </td>
-    <td>
         <a href="~/Content/Documents/@item.Document">Contract</a>
     </td>
     <td>
-        @Html.ActionLink(" ", "Edit", new { id = item.Employee_NIC }, new { @class = "LinkEdit" })
-        @Html.ActionLink(" ", "Delete", new { id = item.Employee_NIC }, new { @class = "LinkMore" })
+        @Html.ActionLink(" ", "Edit", new { id = item.ID }, new { @class = "LinkEdit" })
+        @Html.ActionLink(" ", "Delete", new { id = item.ID }, new { @class = "LinkMore" })
     </td>
 </tr>
 }

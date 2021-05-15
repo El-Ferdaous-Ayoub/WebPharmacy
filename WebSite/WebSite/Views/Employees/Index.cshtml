@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Classes.Models.UserModel>
+﻿@model IEnumerable<Classes.Employee>
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -33,21 +33,21 @@
                                     <div class="col-7">
                                         <h2 class="lead"><b>@item.FirstName @item.LastName</b></h2>
                                         <ul class="ml-4 mb-0 fa-ul text-muted">
-                                            <li class="small"><span class="fa-li"><i class="fas fa-lg fa-tasks"></i></span>@item.Departement_Title</li>
+                                            <li class="small"><span class="fa-li"><i class="fas fa-lg fa-tasks"></i></span>@item.Department.Title</li>
                                             <li class="small"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span>@item.Address</li>
                                             <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span>@item.Phone</li>
                                             <li class="small"><span class="fa-li"><i class="fas fa-lg fa-envelope"></i></span>@item.Email</li>
                                         </ul>
                                     </div>
                                     <div class="col-5 text-center">
-                                        <img src="~/Content/Images/Users/@item.Photo" alt="user-avatar" class="img-circle img-fluid">
+                                        <img src="~/Content/Images/Users/@item.Picture" alt="user-avatar" class="img-circle img-fluid">
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer">
                                 <div class="text-right">
-                                    @Html.ActionLink(" ", "Edit", new { id = item.NIC }, new { @class = "LinkEdit" })
-                                    @Html.ActionLink(" ", "More", new { id = item.NIC }, new { @class = "LinkMore" })
+                                    @Html.ActionLink(" ", "Edit", new { id = item.ID }, new { @class = "LinkEdit" })
+                                    @Html.ActionLink(" ", "More", new { id = item.ID }, new { @class = "LinkMore" })
 
                                 </div>
                             </div>

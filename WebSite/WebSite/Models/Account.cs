@@ -1,4 +1,5 @@
-﻿using Classes;
+﻿using BAL;
+using Classes;
 using Classes.Models;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace WebSite.Models
 {
     public class Account
     {
-        public static UserModel User { get; set; }
-        public static DepartmentModel Department { get; set; }
+        public static Employee User { get; set; } 
+        public static Department Department { get; set; } 
     }
 }

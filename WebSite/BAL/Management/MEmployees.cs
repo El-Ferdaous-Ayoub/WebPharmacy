@@ -11,9 +11,14 @@ namespace BAL
 {
     public class MEmployees
     {
-        public Employee Get(String NIC)
+        public Employee Get(int id)
         {
-            return Get_Data.Get_Employee(NIC);
+            return Get_Data.Get_Employee(id);
+        }
+
+        public Employee GetByNIC(String nic)
+        {
+            return Get_Data.GetEmployeeByNIC(nic);
         }
 
         public List<Employee> Get_All()
@@ -24,7 +29,9 @@ namespace BAL
         public void Update(Employee employee)
         {
             Employee org = Get(employee.ID);
-            if (org == null) throw new Exception($"Employee ({employee.ID}) is Not Exist");
+            if (org == null) throw new Exception($"The Employee is Not Exist");
+            var emp = GetByNIC(employee.NIC);
+            if(emp != null && emp.ID != org.ID) throw new Exception($"Employee ({employee.NIC}) is Aready Exist");
             Management.Detach(org);
             Management.Update(employee);
         }
@@ -35,33 +42,14 @@ namespace BAL
             Management.Add(employee);
         }
 
-        public void Remove(String ID)
+        public void Remove(int ID)
         {
             Employee org = Get(ID);
-            if (org == null) throw new Exception($"Employee ({ID}) is Not Exist");
-            new MUsers().Remove(org.UserName);
-            new MContrats().Remove(ID);
+            if (org == null) throw new Exception($"Employee is Not Exist");
+            var contract = new MContrats().GetEmpContract(ID);
+            if(contract != null)
+            new MContrats().Remove(contract.ID);
             Management.Remove(org);
-        }
-
-        public void NewNIC(String orgNIC,Employee employee)
-        {
-            Employee org = Get(orgNIC);
-            if (org == null) throw new Exception($"Employee ({orgNIC}) is Not Exist");
-            Add(employee);
-            Contract orgContract = new MContrats().Get(orgNIC);
-            if (orgContract != null)
-            {
-                Contract contract = new Contract()
-                {
-                    Employee_NIC = employee.ID,
-                    Start = orgContract.Start,
-                    End = orgContract.End,
-                    Document = orgContract.Document
-                };
-                new MContrats().NewNIC(orgNIC, contract);
-            }
-            Management.Remove(org);
-        }
+        } 
     }
 }

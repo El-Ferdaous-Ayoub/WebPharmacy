@@ -23,14 +23,14 @@ namespace WebSite.Controllers
         }
 
         // GET: Producers/Details/5
-        public ActionResult Details(string id)
+        public ActionResult Details(int id)
         {
             var action = new CheckController().CheckStatus("Producers");
             if (action != null) return action;
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            //if (id == null)
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
             Producer producer = db.Get(id);
             if (producer == null)
             {
@@ -52,7 +52,7 @@ namespace WebSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Name,Address,Email,PhoneN")] Producer producer)
+        public ActionResult Create([Bind(Include = "ID,Name,Address,Email,Phone")] Producer producer)
         {
             var action = new CheckController().CheckStatus("Producers");
             if (action != null) return action;
@@ -61,7 +61,7 @@ namespace WebSite.Controllers
                 if (ModelState.IsValid)
                 {
                     if (String.IsNullOrEmpty(producer.Name) ||
-              String.IsNullOrWhiteSpace(producer.Name))
+                          String.IsNullOrWhiteSpace(producer.Name))
                         throw new Exception($"Cannot Create Producer By Empty Name");
                     db.Add(producer);
                     return RedirectToAction("Index");
@@ -75,11 +75,11 @@ namespace WebSite.Controllers
         }
 
         // GET: Producers/Edit/5
-        public ActionResult Edit(string id)
+        public ActionResult Edit(int id)
         {
             var action = new CheckController().CheckStatus("Producers");
             if (action != null) return action;
-            if (id == null || id.CompareTo("Unknown") == 0)
+            if (id == db.GetUNProducer().ID)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -96,29 +96,20 @@ namespace WebSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Name,Address,Email,PhoneN")] Producer producer, String NewName)
+        public ActionResult Edit([Bind(Include = "ID,Name,Address,Email,Phone")] Producer producer)
         {
+            if (db.GetUNProducer().ID == producer.ID)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var action = new CheckController().CheckStatus("Producers");
             if (action != null) return action;
             try
             {
                 if (ModelState.IsValid)
                 {
-                    if (String.IsNullOrEmpty(NewName))
-                        db.Update(producer);
-                    else
-                    {
-                        if (String.IsNullOrWhiteSpace(NewName))
-                            throw new Exception($"Cannot Update Producer To Empty Name");
-                        Producer Nproducer = new Producer()
-                        {
-                            Name = NewName,
-                            Address = producer.Address,
-                            Email = producer.Email,
-                            PhoneN = producer.PhoneN
-                        };
-                        db.NewName(producer.Name, Nproducer);
-                    }
+                    if (String.IsNullOrEmpty(producer.Name) ||
+                          String.IsNullOrWhiteSpace(producer.Name))
+                        throw new Exception($"Cannot Update Producer To Empty Name");
+                    db.Update(producer);
                     return RedirectToAction("Index");
                 }
             }
@@ -131,11 +122,11 @@ namespace WebSite.Controllers
         }
 
         // GET: Producers/Delete/5
-        public ActionResult Delete(string id)
+        public ActionResult Delete(int id)
         {
             var action = new CheckController().CheckStatus("Producers");
             if (action != null) return action;
-            if (id == null)
+            if (id == db.GetUNProducer().ID)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -144,21 +135,27 @@ namespace WebSite.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.Products = new MProducts().Get_All().Where(item =>
-                item.Producer_Name.CompareTo(id) == 0).ToList();
+            var products = new MProducts().Get_All().Where(item =>
+                item.Producer_ID == id).ToList();
+
+            foreach (var item in products)
+                item.Category = new MCategories().Get(item.Category_ID);
+
+            ViewBag.Products = products;
             return View(producer);
         }
 
         // POST: Producers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(int id)
         {
             var action = new CheckController().CheckStatus("Producers");
             if (action != null) return action;
             try
             {
-                if (id.CompareTo("Unknown") == 0) throw new Exception("Not authorized to delete");
+                var up = db.Get_All().Where(i => i.Name.CompareTo("Unknown") == 0).First().ID;
+                if (id == up) throw new Exception("This producer cannot be deleted");
                 db.Delete(id);
                 return RedirectToAction("Index");
             }

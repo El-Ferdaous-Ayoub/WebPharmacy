@@ -10,9 +10,9 @@ namespace BAL
 {
     public class MDepartments
     {
-        public Department Get(String Title)
+        public Department Get(int id)
         {
-            return Get_Data.Get_Department(Title);
+            return Get_Data.Get_Department(id);
         }
 
         public List<Department> Get_All()
@@ -22,10 +22,18 @@ namespace BAL
 
         public void Update(Department department)
         {
-            Department org = Get(department.Title);
+            Department org = Get(department.ID);
             if (org == null) throw new Exception($"This Department ({department.Title}) is Not Exist");
+            var dep = Get(department.Title);
+            if (dep != null && dep.ID != org.ID)
+                throw new Exception($"This Department ({department.Title}) is Aready Exist");
             Management.Detach(org);
             Management.Update(department);
+        }
+
+        public Department Get(string title)
+        {
+            return Get_Data.Get_Departments().Where(item => item.Title.CompareTo(title) == 0).FirstOrDefault();
         }
 
         public void Add(Department department)
@@ -34,68 +42,28 @@ namespace BAL
             Management.Add(department);
         }
 
-        public void Remove(String Title)
+        public void Remove(int id)
         {
-            Department org = Get(Title);
-            if (org == null) throw new Exception($"Department ({Title}) is Not Exist");
-            Role role = Get_Data.GetRole(Title);
+            Department org = Get(id);
+            if (org == null) throw new Exception($"Department Not Exist");
+
             var me = new MEmployees();
-            foreach (var item in me.Get_All())
+            var ud = GetUNDepartment().ID;
+            var lst = new List<Employee> (me.Get_All());
+            foreach (var item in lst)
             {
-                if (item.Department_Title.CompareTo(Title) == 0)
+                if (item.Department_ID == id)
                 {
-                    item.Department_Title = "Unknown";
+                    item.Department_ID = ud;
                     me.Update(item);
                 }
             }
-            Management.Remove(role);
             Management.Remove(org);
         }
 
-        public void NewTitle(String Org, Department NewDepartment)
+        public Department GetUNDepartment()
         {
-            Department org = Get(Org);
-            if (org == null) throw new Exception($"This Department ({org}) is Not Exist");
-            Management.Add(NewDepartment);
-            foreach (var item in Get_Data.Get_Employees()
-                .Where(i=>i.Department_Title.CompareTo(Org) == 0))
-            {
-                item.Department_Title = NewDepartment.Title;
-                new MEmployees().Update(item);
-            }
-            Role orgrole = Get_Data.GetRole(Org);
-            Role role = new Role()
-            {
-                Department_Title = NewDepartment.Title,
-                Producers = orgrole.Producers,
-                Products = orgrole.Products,
-                Categories = orgrole.Categories,
-                Orders = orgrole.Orders,
-                Employees = orgrole.Employees,
-                ContractTypes = orgrole.ContractTypes,
-                Departments = orgrole.Departments
-            };
-            Management.Add(role);
-            Management.Remove(orgrole);
-            Management.Remove(org);
-         }
-
-        public void AddRole(Role role)
-        {
-            Management.Add(role);
-        }
-
-        public Role GetRole(String Department)
-        {
-            return Get_Data.GetRole(Department);
-        }
-
-        public void UpdateRole(Role role)
-        {
-            Role org = GetRole(role.Department_Title);
-            if (org == null) throw new Exception();
-            Management.Detach(org);
-            Management.Update(role);
+            return Get_All().Where(i => i.Title.CompareTo("Unknown") == 0).FirstOrDefault();
         }
     }
 }

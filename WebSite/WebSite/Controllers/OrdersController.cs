@@ -45,15 +45,14 @@ namespace WebSite.Controllers
         {
             var list = pdb.Get_All();
             Products = new List<ProductToOrder>();
-                foreach (var item in list)
-                {
-                    Products.Add(new ProductToOrder(item));
-                }
+            foreach (var item in list)
+            {
+                item.Category = new MCategories().Get(item.Category_ID);
+                item.Producer = new MProducers().Get(item.Producer_ID);
+                Products.Add(new ProductToOrder(item));
+            }
             if (!String.IsNullOrEmpty(id))
             {
-                OrderDone done = db.IsDone(id);
-                ViewBag.Done =(done != null)?done.ArrivedToStock:false;
-                
                 foreach (var item in db.GetOrders_Info(id))
                 {
                     var oi = Products.Where(i => i.ID.CompareTo(item.Product_ID) == 0).FirstOrDefault();
@@ -64,6 +63,9 @@ namespace WebSite.Controllers
                     }
                     else
                     {
+                        var up = new MProducers().GetUNProducer().ID;
+                        var uc = new MCategories().GetUNCategory().ID;
+
                         Product product = new Product()
                         {
                             ID = item.Product_ID,
@@ -71,8 +73,8 @@ namespace WebSite.Controllers
                             Product_Name = "",
                             Quantity = 0,
                             Price = 0,
-                            Category_Name = "Unknown",
-                            Producer_Name = "Unknown"
+                            Category_ID = up,
+                            Producer_ID = uc
                         };
                         pdb.Add(product);
                         Products.Add(new ProductToOrder(product, item.Price, item.Quantity));
@@ -81,18 +83,18 @@ namespace WebSite.Controllers
             }
         }
 
-        private void FillProductsForDelete(String id = "")
+        private void FillProductsForDelete(String id)
         {
             var list = pdb.Get_All();
             Products = new List<ProductToOrder>();
-            OrderDone done = db.IsDone(id);
-            ViewBag.Done = (done != null) ? done.ArrivedToStock : false;
-            ViewBag.QuantityChanged = (done != null) ? done.QuantityChanged : false;
             foreach (var item in db.GetOrders_Info(id))
             {
                 var pd = list.Where(i => i.ID.CompareTo(item.Product_ID) == 0).FirstOrDefault();
                 if (pd == null)
                 {
+                    var up = new MProducers().GetUNProducer().ID;
+                    var uc = new MCategories().GetUNCategory().ID;
+
                     Product product = new Product()
                     {
                         ID = item.Product_ID,
@@ -100,8 +102,8 @@ namespace WebSite.Controllers
                         Product_Name = "",
                         Quantity = 0,
                         Price = 0,
-                        Category_Name = "Unknown",
-                        Producer_Name = "Unknown"
+                        Category_ID = uc,
+                        Producer_ID = up
                     };
                     pdb.Add(product);
                 }
@@ -113,14 +115,12 @@ namespace WebSite.Controllers
         // POST: Orders/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Order order,Boolean Done = false,Boolean ChangeQuantity = false)
+        public ActionResult Create(Order order)
         {
             var action = new CheckController().CheckStatus("Orders");
             if (action != null) return action;
             try
             {
-                if (!Done && ChangeQuantity) ChangeQuantity = false;
-                order.Owner = "Pharmacy";
                 List<OrderInfo> orderInfos = new List<OrderInfo>();
                 float total = 0;
                 foreach (var item in Products)
@@ -133,7 +133,7 @@ namespace WebSite.Controllers
                 }
                 order.TotalAmount = total;
                 if (orderInfos.Count <= 0) return View(order);
-                db.Add(order, orderInfos,Done,ChangeQuantity);
+                db.Add(order,orderInfos);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -163,13 +163,12 @@ namespace WebSite.Controllers
 
         // POST: Orders/Edit/5
         [HttpPost]
-        public ActionResult Edit(Order order, Boolean Done, Boolean ChangeQuantity)
+        public ActionResult Edit(Order order)
         {
             var action = new CheckController().CheckStatus("Orders");
             if (action != null) return action;
             try
             {
-                if (!Done && ChangeQuantity) ChangeQuantity = false;
                 List<OrderInfo> orderInfos = new List<OrderInfo>();
                 float total = 0;
                 foreach (var item in Products)
@@ -182,14 +181,13 @@ namespace WebSite.Controllers
                 }
                 order.TotalAmount = total;
                 if (orderInfos.Count <= 0) return View(order);
-                db.Update(order, orderInfos, Done,ChangeQuantity);
+                db.Update(order, orderInfos);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
             }
-            ViewBag.Done = Done;
             return View(order);
         }
 

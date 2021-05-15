@@ -6,12 +6,15 @@ using System.Web;
 using System.Web.Mvc;
 using BAL;
 using Classes;
+using System.IO;
 
 namespace WebSite.Controllers
 {
     public class ProductsController : Controller
     {
         private MProducts db = new MProducts();
+        private MCategories MC = new MCategories();
+        private MProducers MP = new MProducers();
 
         // GET: Products
         public ActionResult Index(String Error = "")
@@ -19,70 +22,42 @@ namespace WebSite.Controllers
             var action = new CheckController().CheckStatus("Products");
             if (action != null) return action;
             ViewBag.Error = Error;
-            SetSelectedList();
-            return View(db.Get_All());
-        }
-
-        private void SetSelectedList()
-        {
-            List<Category> lstcat = new MCategories().Get_All().ToList();
-            List<Producer> lstpro = new MProducers().Get_All().ToList();
-            lstcat.Add(new Category() { Name = "All" });
-            lstpro.Add(new Producer() { Name = "All" });
-            ViewBag.Category_Name = new SelectList(lstcat, "Name", "Name");
-            ViewBag.Producer_Name = new SelectList(lstpro, "Name", "Name");
+            return View(GetList(""));
         }
 
         [HttpPost]
-        public ActionResult Index(String ID, String Category_Name, String Producer_Name)
+        public ActionResult Index(String ID,int? i)
         {
             var action = new CheckController().CheckStatus("Products");
             if (action != null) return action;
-            SetSelectedList();
-            return View(GetSearched(ID, Category_Name, Producer_Name).ToList());
+            return View(GetList(ID));
         }
 
-        public IEnumerable<Product> GetSearched(String ID, String Category_Name, String Producer_Name)
+        private List<Product> GetList(String ID)
         {
-            if ((Producer_Name.CompareTo("All") == 0) && (Category_Name.CompareTo("All") == 0))
-                return ((from e in db.Get_All() where e.ID.Contains(ID) || e.Product_Name.Contains(ID) select e));
-            /*--------------------------------------------------------------------------------------------------*/
-            if ((Producer_Name.CompareTo("All") != 0) && (Category_Name.CompareTo("All") == 0))
-                return ((from e in db.Get_All()
-                         where (e.ID.Contains(ID) || e.Product_Name.Contains(ID)) &&
-                         (e.Producer_Name.CompareTo(Producer_Name) == 0)
-                         select e));
-            /*--------------------------------------------------------------------------------------------------*/
-            if ((Producer_Name.CompareTo("All") == 0) && (Category_Name.CompareTo("All") != 0))
-                return ((from e in db.Get_All()
-                         where (e.ID.Contains(ID) || e.Product_Name.Contains(ID)) &&
-                        (e.Category_Name.CompareTo(Category_Name) == 0)
-                         select e));
-            /*--------------------------------------------------------------------------------------------------*/
-            return (from e in db.Get_All()
-                    where (e.ID.Contains(ID) || e.Product_Name.Contains(ID)) && (
-                    e.Category_Name.CompareTo(Category_Name) == 0 && e.Producer_Name.CompareTo(Producer_Name) == 0)
-                    select e);
+            var list = db.Get_All().Where(item => item.ID.Contains(ID)).ToList();
+            foreach (var item in list)
+            {
+                item.Category = MC.Get(item.Category_ID);
+                item.Producer = MP.Get(item.Producer_ID);
+            }
+            return list;
         }
 
-        // GET: Products/Create
         public ActionResult Create()
         {
             var action = new CheckController().CheckStatus("Products");
             if (action != null) return action;
-            ViewBag.Category_Name = new SelectList(new MCategories().Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
-                "Name", "Name");
-            ViewBag.Producer_Name = new SelectList(new MProducers().Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
-                "Name", "Name");
+            ViewBag.Category_ID = new SelectList(MC.Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
+                "ID", "Name");
+            ViewBag.Producer_ID = new SelectList(MP.Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
+                "ID", "Name");
             return View();
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Product_Name,Producer_Name,Price,Category_Name")] Product product, HttpPostedFileBase ImageUrl, float Discount)
+        public ActionResult Create([Bind(Include = "ID,Product_Name,Producer_ID,Price,Category_ID")] Product product, HttpPostedFileBase ImageUrl)
         {
             var action = new CheckController().CheckStatus("Products");
             if (action != null) return action;
@@ -93,22 +68,18 @@ namespace WebSite.Controllers
                     if (String.IsNullOrEmpty(product.ID) ||
                         String.IsNullOrWhiteSpace(product.ID))
                         throw new Exception($"Cannot Create Product By Empty ID");
-                    if (String.IsNullOrEmpty(product.Category_Name) ||
-                        String.IsNullOrWhiteSpace(product.Category_Name) ||
-                        product.Category_Name.CompareTo("Unknown") == 0)
-                        throw new Exception($"Cannot Create a Product By Empty Or '{product.Category_Name}' Category");
-                    if (String.IsNullOrEmpty(product.Producer_Name) ||
-                       String.IsNullOrWhiteSpace(product.Producer_Name) ||
-                       product.Producer_Name.CompareTo("Unknown") == 0)
-                        throw new Exception($"Cannot Create a Product By Empty Or '{product.Producer_Name}' Producer");
-
-                    product.Discount = Discount / 100;
+                   
                     if (ImageUrl != null)
                     {
-                        string ImageName = System.IO.Path.GetFileName(ImageUrl.FileName);
-                        string physicalPath = Server.MapPath("~/Content/Images/Products/" + ImageName);
+                        var str = "";
+                        string ImageName = Path.GetFileName(ImageUrl.FileName);
+                        do
+                        {
+                            str = GetName();
+                        } while (System.IO.File.Exists($"~/Content/Images/Products/{str}{ImageName}"));
+                        string physicalPath = Server.MapPath($"~/Content/Images/Products/{str}{ImageName}");
                         ImageUrl.SaveAs(physicalPath);
-                        product.Picture = ImageName;
+                        product.Picture = $"{str}{ImageName}";
                     }
                     db.Add(product);
                     return RedirectToAction("Index");
@@ -118,12 +89,21 @@ namespace WebSite.Controllers
             {
                 ModelState.AddModelError("", ex.Message);
             }
-            ViewBag.Category_Name = new SelectList(new MCategories().Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
-                "Name", "Name", product.Category_Name);
-            ViewBag.Producer_Name = new SelectList(new MProducers().Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
-                "Name", "Name", product.Producer_Name);
+            ViewBag.Category_ID = new SelectList(MC.Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
+                "ID", "Name", product.Category_ID);
+            ViewBag.Producer_ID = new SelectList(MP.Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
+                "ID", "Name", product.Producer_ID);
             return View(product);
         }
+
+        public String GetName()
+        {
+            Random random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, 20)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
 
         // GET: Products/Edit/5
         public ActionResult Edit(string id)
@@ -139,20 +119,16 @@ namespace WebSite.Controllers
             {
                 return HttpNotFound();
             }
-            product.Discount *= 100;
-            ViewBag.Category_Name = new SelectList(new MCategories().Get_All().Where(i=>i.Name.CompareTo("Unknown") !=0).ToList(),
-                "Name", "Name", product.Category_Name);
-            ViewBag.Producer_Name = new SelectList(new MProducers().Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList()
-                , "Name", "Name", product.Producer_Name);
+            ViewBag.Category_ID = new SelectList(MC.Get_All().Where(i=>i.Name.CompareTo("Unknown") !=0).ToList(),
+                "ID", "Name", product.Category_ID);
+            ViewBag.Producer_ID = new SelectList(MP.Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList()
+                , "ID", "Name", product.Producer_ID);
             return View(product);
         }
 
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Product_Name,Producer_Name,Price,Quantity,Category_Name")] Product product, HttpPostedFileBase ImageUrl, float Discount)
+        public ActionResult Edit([Bind(Include = "ID,Product_Name,Producer_ID,Price,Quantity,Category_ID")] Product product, HttpPostedFileBase ImageUrl)
         {
             var action = new CheckController().CheckStatus("Products");
             if (action != null) return action;
@@ -160,26 +136,24 @@ namespace WebSite.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (String.IsNullOrEmpty(product.Category_Name) ||
-               String.IsNullOrWhiteSpace(product.Category_Name) ||
-               product.Category_Name.CompareTo("Unknown") == 0)
-                        throw new Exception($"Cannot Update Product To Empty Or '{product.Category_Name}' Category");
-                    if (String.IsNullOrEmpty(product.Producer_Name) ||
-                       String.IsNullOrWhiteSpace(product.Producer_Name) ||
-                       product.Producer_Name.CompareTo("Unknown") == 0)
-                        throw new Exception($"Cannot Update Product To Empty Or '{product.Producer_Name}' Producer");
-                    product.Discount = Discount / 100;
                     Product org = db.Get(product.ID);
                     if (org != null)
                         product.Picture = org.Picture;
-                    
 
                     if (ImageUrl != null)
                     {
-                        string ImageName = System.IO.Path.GetFileName(ImageUrl.FileName);
-                        string physicalPath = Server.MapPath("~/Content/Images/Products/" + ImageName);
+                        if (System.IO.File.Exists($"~/Content/Images/Products/{org.Picture}"))
+                            System.IO.File.Delete($"~/Content/Images/Products/{org.Picture}");
+                        
+                        var str = "";
+                        string ImageName = Path.GetFileName(ImageUrl.FileName);
+                        do
+                        {
+                            str = GetName();
+                        } while (System.IO.File.Exists($"~/Content/Images/Products/{str}{ImageName}"));
+                        string physicalPath = Server.MapPath($"~/Content/Images/Products/{str}{ImageName}");
                         ImageUrl.SaveAs(physicalPath);
-                        product.Picture = ImageName;
+                        product.Picture = $"{str}{ImageName}";
                     }
                     db.Update(product);
                     return RedirectToAction("Index");
@@ -190,8 +164,10 @@ namespace WebSite.Controllers
                 ModelState.AddModelError("", ex.Message);
             }
 
-            ViewBag.Category_Name = new SelectList(new MCategories().Get_All(), "Name", "Name", product.Category_Name);
-            ViewBag.Producer_Name = new SelectList(new MProducers().Get_All(), "Name", "Name", product.Producer_Name);
+            ViewBag.Category_ID = new SelectList(MC.Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
+                    "ID", "Name", product.Category_ID);
+            ViewBag.Producer_ID = new SelectList(MP.Get_All().Where(i => i.Name.CompareTo("Unknown") != 0).ToList(),
+                "ID", "Name", product.Producer_ID);
             return View(product);
         }
 
@@ -209,6 +185,8 @@ namespace WebSite.Controllers
             {
                 return HttpNotFound();
             }
+            product.Category = MC.Get(product.Category_ID);
+            product.Producer = MP.Get(product.Producer_ID);
             return View(product);
         }
 

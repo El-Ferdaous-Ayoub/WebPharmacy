@@ -36,7 +36,8 @@
             <img src="~/Content/@img" id="ProductPicture" alt="Alternate Text" width="200" height="200" class="img-thumbnail d-inline" />
             <div class="input-group">
                 <div class="custom-file col-md-4 d-inline">
-                    <input type="file" name="ImageUrl" value="Upload Image" class="custom-file-input" />
+                    <input type="file" name="ImageUrl" value="Upload Image" class="custom-file-input" 
+                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"/>
                     <label class="custom-file-label">Choose file</label>
                 </div>
             </div>
@@ -53,18 +54,18 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.Producer_Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.Label("Producer", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.DropDownList("Producer_Name", null, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Producer_Name, "", new { @class = "text-danger" })
+            @Html.DropDownList("Producer_ID", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Producer_ID, "", new { @class = "text-danger" })
         </div>
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.Category_Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.Label("Category", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.DropDownList("Category_Name", null, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Category_Name, "", new { @class = "text-danger" })
+            @Html.DropDownList("Category_ID", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Category_ID, "", new { @class = "text-danger" })
         </div>
     </div>
 
@@ -80,14 +81,6 @@
         @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <input type="text" name="Discount" value="@Model.Discount"  class="form-control"/>
             @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
         </div>
     </div>

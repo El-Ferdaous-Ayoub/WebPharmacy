@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Classes;
 using BAL;
 using System.Net;
+using System.IO;
 
 namespace WebSite.Controllers
 {
@@ -18,7 +19,12 @@ namespace WebSite.Controllers
             var action = new CheckController().CheckStatus("ContractTypes");
             if (action != null) return action;
             ViewBag.Error = Error;
-            return View(db.Get_All());
+            var list = db.Get_All();
+            foreach (var item in list)
+            {
+                item.Employee = new MEmployees().Get(item.Employee_ID);
+            }
+            return View(list);
         }
 
         // GET: Contrats/Create
@@ -26,9 +32,7 @@ namespace WebSite.Controllers
         {
             var action = new CheckController().CheckStatus("ContractTypes");
             if (action != null) return action;
-            ViewBag.Employee_NIC = new SelectList(new MEmployees().Get_All(), "ID", "ID");
-            ViewBag.Type = new SelectList(new MContract_Types().Get_All()
-                .Where(i => i.Title.CompareTo("Unknown") != 0), "Title", "Title");
+            ViewBag.Employee_ID = new SelectList(new MEmployees().Get_All(), "ID", "NIC");
             return View();
         }
 
@@ -37,35 +41,30 @@ namespace WebSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Employee_NIC,Type,Start,End")] Contract contract
-            , HttpPostedFileBase Document)
+        public ActionResult Create([Bind(Include = "Employee_ID,Type,Start")] Contract contract
+            ,HttpPostedFileBase Document)
         {
             var action = new CheckController().CheckStatus("ContractTypes");
             if (action != null) return action;
             try
             {
                
-                    if (String.IsNullOrEmpty(contract.Employee_NIC) ||
-                        String.IsNullOrWhiteSpace(contract.Employee_NIC) )
-                            throw new Exception($"Cannot Create Contract By Empty Employee NIC");
+                    if(new MEmployees().Get(contract.Employee_ID) == null)
+                        throw new Exception($"Cannot Find The Employee");
 
-                    if(new MEmployees().Get(contract.Employee_NIC) == null)
-                        throw new Exception($"Cannot Find Employee '{contract.Employee_NIC}' NIC");
-
-                    if (String.IsNullOrEmpty(contract.Type) ||
-                     String.IsNullOrWhiteSpace(contract.Type) ||
-                     contract.Type.CompareTo("Unknown") == 0)
-                        throw new Exception($"Cannot Create Contract By Empty Or '{contract.Type}' Type");
-                if (!new MContract_Types().Get(contract.Type).Duration)
-                    contract.End = DateTime.Now.AddYears(100);
-                
-                    if (Document != null)
+                if (Document != null)
                     {
-                        string DocumentName = System.IO.Path.GetFileName(Document.FileName);
-                        string physicalPath = Server.MapPath("~/Content/Documents/" + contract.Employee_NIC + DocumentName);
-                        Document.SaveAs(physicalPath);
-                        contract.Document = contract.Employee_NIC + DocumentName;
-                    }
+                    var str = "";
+                    string fileName = Path.GetFileName(Document.FileName);
+                    do
+                    {
+                        str = GetName();
+                    } while (System.IO.File.Exists($"~/Content/Documents/{str}{fileName}"));
+
+                    string physicalPath = Server.MapPath($"~/Content/Documents/{str}{fileName}");
+                    Document.SaveAs(physicalPath);
+                    contract.Document = $"{str}{fileName}";
+                }
                     db.Add(contract);
                     return RedirectToAction("Index");
 
@@ -74,29 +73,33 @@ namespace WebSite.Controllers
             {
                 ModelState.AddModelError("", ex.Message);
             }
-            ViewBag.Employee_NIC = new SelectList(new MEmployees().Get_All(), "ID", "ID",contract.Employee_NIC);
-            ViewBag.Type = new SelectList(new MContract_Types().Get_All()
-                   .Where(i => i.Title.CompareTo("Unknown") == 0), "Title", "Title",contract.Type);
+            ViewBag.Employee_ID = new SelectList(new MEmployees().Get_All(), "ID", "NIC", contract.Employee_ID);
             return View(contract);
         }
 
+        public String GetName()
+        {
+            Random random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, 20)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
         // GET: Contrats/Edit/5
-        public ActionResult Edit(String id)
+        public ActionResult Edit(int id)
         {
             var action = new CheckController().CheckStatus("ContractTypes");
             if (action != null) return action;
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            //if (id == null)
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
             Contract contract = db.Get(id);
             if (contract == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.Employee_NIC = new SelectList(new MEmployees().Get_All(), "ID", "ID", id);
-            ViewBag.Type = new SelectList(new MContract_Types().Get_All()
-                .Where(i => i.Title.CompareTo("Unknown") != 0), "Title", "Title", contract.Type);
+            contract.Employee = new MEmployees().Get(contract.Employee_ID);
             return View(contract);
         }
 
@@ -105,42 +108,34 @@ namespace WebSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Employee_NIC,Type,Start,End")] Contract contract
-           , String oldNIC, HttpPostedFileBase Document)
+        public ActionResult Edit([Bind(Include = "ID,Employee_ID,Type,Start,Document")] Contract contract
+          , HttpPostedFileBase Document)
         {
             var action = new CheckController().CheckStatus("ContractTypes");
             if (action != null) return action;
             try
             {
-                    if (String.IsNullOrEmpty(contract.Employee_NIC) ||
-                        String.IsNullOrWhiteSpace(contract.Employee_NIC))
-                        throw new Exception($"Cannot Create Contract By Empty Employee NIC");
+                if (new MEmployees().Get(contract.Employee_ID) == null)
+                    throw new Exception($"Cannot Find The Employee");
 
-                    if (new MEmployees().Get(contract.Employee_NIC) == null)
-                        throw new Exception($"Cannot Find Employee '{contract.Employee_NIC}' NIC");
+                if (Document != null)
+                {
+                    if (System.IO.File.Exists($"~/Content/Documents/{contract.Document}"))
+                        System.IO.File.Delete($"~/Content/Documents/{contract.Document}");
 
-                    if (String.IsNullOrEmpty(contract.Type) ||
-                     String.IsNullOrWhiteSpace(contract.Type) ||
-                     contract.Type.CompareTo("Unknown") == 0)
-                        throw new Exception($"Cannot Create Contract By Empty Or '{contract.Type}' Category");
-
-                if (!new MContract_Types().Get(contract.Type).Duration)
-                    contract.End = DateTime.Now.AddYears(100);
-
-                Contract orgContract = db.Get(oldNIC);
-                    if (Document != null)
+                    var str = "";
+                    string fileName = Path.GetFileName(Document.FileName);
+                    do
                     {
-                        string DocumentName = System.IO.Path.GetFileName(Document.FileName);
-                        string physicalPath = Server.MapPath("~/Content/Documents/" + contract.Employee_NIC + DocumentName);
-                        Document.SaveAs(physicalPath);
-                        contract.Document = contract.Employee_NIC + DocumentName;
-                    }
-                    else
-                        contract.Document = orgContract.Document;
-                    if (oldNIC.CompareTo(contract.Employee_NIC) != 0)
-                        db.NewNIC(oldNIC, contract);
-                    else
-                        db.Update(contract);
+                        str = GetName();
+                    } while (System.IO.File.Exists($"~/Content/Documents/{str}{fileName}"));
+
+                    string physicalPath = Server.MapPath($"~/Content/Documents/{str}{fileName}");
+                    Document.SaveAs(physicalPath);
+                    contract.Document = $"{str}{fileName}";
+                }
+
+                db.Update(contract);
                     return RedirectToAction("Index");
   
             }
@@ -148,31 +143,32 @@ namespace WebSite.Controllers
             {
                 ModelState.AddModelError("", ex.Message);
             }
-            ViewBag.Type = new SelectList(new MContract_Types().Get_All(), "Title", "Title", contract.Type);
+            ViewBag.Employee_ID = new SelectList(new MEmployees().Get_All(), "ID", "NIC", contract.Employee_ID);
             return View(contract);
         }
 
         // GET: Contrats/Delete/5
-        public ActionResult Delete(String id)
+        public ActionResult Delete(int id)
         {
             var action = new CheckController().CheckStatus("ContractTypes");
             if (action != null) return action;
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            //if (id == null)
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
             Contract contract = db.Get(id);
             if (contract == null)
             {
                 return HttpNotFound();
             }
+            contract.Employee = new MEmployees().Get(contract.Employee_ID);
             return View(contract);
         }
 
         // POST: Contrats/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(String id)
+        public ActionResult DeleteConfirmed(int id)
         {
             var action = new CheckController().CheckStatus("ContractTypes");
             if (action != null) return action;

@@ -8,42 +8,43 @@ using Classes.Models;
 using BAL;
 using System.Net;
 using WebSite.Models;
+using System.IO;
 
 namespace WebSite.Controllers
 {
     public class EmployeesController : Controller
     {
         private MEmployees db = new MEmployees();
-        private MUsers udb = new MUsers();
-
+        private MDepartments ddb = new MDepartments();
         // GET: Employees
         public ActionResult Index(String Error = "")
         {
             var action = new CheckController().CheckStatus("Employees");
             if (action != null) return action;
             ViewBag.Error = Error;
-            return View(udb.GetUEmployees());
+            var list = db.Get_All();
+            foreach (var item in list)
+            item.Department = new MDepartments().Get(item.Department_ID);
+            return View(list);
         }
 
         // GET: Employees/Details/5
-        public ActionResult More(String id)
+        public ActionResult More(int id)
         {
             var action = new CheckController().CheckStatus("Employees");
             if (action != null) return action;
             new CheckController().CheckStatus("Employees");
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            //if (id == null)
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
             Employee employee = db.Get(id);
             if (employee == null)
             {
                 return HttpNotFound();
             }
-            UserModel userModel = new UserModel();
-            userModel.SetEmployee(employee);
-            userModel.SetUser(udb.GetByNIC(id));
-            return View(userModel);
+            employee.Department = new MDepartments().Get(employee.Department_ID);
+            return View(employee);
         }
 
         // GET: Employees/Create
@@ -54,8 +55,8 @@ namespace WebSite.Controllers
                 var action = new CheckController().CheckStatus("Employees");
                 if (action != null) return action;
             }
-            ViewBag.Departement_Title = new SelectList(new MDepartments().Get_All()
-                .Where(i => i.Title.CompareTo("Unknown") != 0).ToList(), "Title", "Title");
+            ViewBag.Department_ID = new SelectList(new MDepartments().Get_All()
+                .Where(i => i.Title.CompareTo("Unknown") != 0).ToList(), "ID", "Title");
             return View();
         }
 
@@ -64,9 +65,9 @@ namespace WebSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(UserModel userModel, HttpPostedFileBase ImageUrl)
+        public ActionResult Create(Employee employee, HttpPostedFileBase ImageUrl)
         {
-            if (udb.GetUEmployees().Count != 0)
+            if (db.Get_All().Count != 0)
             {
                 var action = new CheckController().CheckStatus("Employees");
                 if (action != null) return action;
@@ -74,31 +75,31 @@ namespace WebSite.Controllers
             Config.CheckData();
             try
             {
-                if (String.IsNullOrEmpty(userModel.NIC) ||
-                 String.IsNullOrWhiteSpace(userModel.NIC))
+                if (String.IsNullOrEmpty(employee.NIC) ||
+                 String.IsNullOrWhiteSpace(employee.NIC))
                     throw new Exception($"Cannot Create Employee By Empty NIC");
 
-                if (String.IsNullOrEmpty(userModel.Departement_Title) ||
-                    String.IsNullOrWhiteSpace(userModel.Departement_Title) ||
-                    userModel.Departement_Title.CompareTo("Unknown") == 0)
-                    throw new Exception($"Cannot Create Employee By Empty Or '{userModel.Departement_Title}' Department");
+                if (ddb.GetUNDepartment().ID == employee.Department_ID )
+                    throw new Exception($"Cannot Create Employee By Empty Or 'Uknown' Department");
 
-                userModel.NIC = userModel.NIC.ToUpper();
-                Employee employee = userModel.GetEmployee();
-                employee.UserName = userModel.NIC;
-                User user = userModel.GetUser();
-                user.UserName = userModel.NIC;
-                user.Password = userModel.NIC;
-                user.Rank = "Employee";
+                employee.NIC.ToUpper();
 
                 if (ImageUrl != null)
                 {
-                    string ImageName = System.IO.Path.GetFileName(ImageUrl.FileName);
-                    string physicalPath = Server.MapPath("~/Content/Images/Users/" + employee.ID + ImageName);
+                    if (System.IO.File.Exists($"~/Content/Images/Users/{employee.Picture}"))
+                        System.IO.File.Delete($"~/Content/Images/Users/{employee.Picture}");
+
+                    var str = "";
+                    string ImageName = Path.GetFileName(ImageUrl.FileName);
+                    do
+                    {
+                        str = GetName();
+                    } while (System.IO.File.Exists($"~/Content/Images/Users/{str}{ImageName}"));
+                    string physicalPath = Server.MapPath($"~/Content/Images/Users/{str}{ImageName}");
                     ImageUrl.SaveAs(physicalPath);
-                    user.Photo = employee.ID + ImageName;
+                    employee.Picture = $"{str}{ImageName}";
                 }
-                udb.Add(user);
+                employee.Password = employee.NIC;
                 db.Add(employee);
                 return RedirectToAction("Index");
             }
@@ -106,31 +107,36 @@ namespace WebSite.Controllers
             {
                 ModelState.AddModelError("", ex.Message);
             }
-            ViewBag.Departement_Title = new SelectList(new MDepartments().Get_All()
-                .Where(i => i.Title.CompareTo("Unknown") != 0).ToList(), "Title", "Title", userModel.Departement_Title);
-            return View(userModel);
+            ViewBag.Department_ID = new SelectList(new MDepartments().Get_All()
+                .Where(i => i.Title.CompareTo("Unknown") != 0).ToList(), "ID", "Title", employee.Department_ID);
+            return View(employee);
+        }
+
+        public String GetName()
+        {
+            Random random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, 20)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
         // GET: Employees/Edit/5
-        public ActionResult Edit(String id)
+        public ActionResult Edit(int id)
         {
             var action = new CheckController().CheckStatus("Employees");
             if (action != null) return action;
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            //if (id == null)
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
             Employee employee = db.Get(id);
             if (employee == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.Departement_Title = new SelectList(new MDepartments().Get_All()
-                .Where(i => i.Title.CompareTo("Unknown") != 0).ToList(), "Title", "Title", employee.Department_Title);
-            UserModel userModel = new UserModel();
-            userModel.SetEmployee(employee);
-            userModel.SetUser(udb.GetByNIC(id));
-            return View(userModel);
+            ViewBag.Department_ID = new SelectList(new MDepartments().Get_All()
+                .Where(i => i.Title.CompareTo("Unknown") != 0).ToList(), "ID", "Title", employee.Department_ID);
+            return View(employee);
         }
 
         // POST: Employees/Edit/5
@@ -138,7 +144,7 @@ namespace WebSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(UserModel userModel, HttpPostedFileBase ImageUrl, String NewNIC)
+        public ActionResult Edit(Employee employee, HttpPostedFileBase ImageUrl)
         {
             var action = new CheckController().CheckStatus("Employees");
             if (action != null) return action;
@@ -146,38 +152,25 @@ namespace WebSite.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (String.IsNullOrEmpty(userModel.Departement_Title) ||
-                        String.IsNullOrWhiteSpace(userModel.Departement_Title)||
-                        userModel.Departement_Title.CompareTo("Unknown") == 0)
-                        throw new Exception($"Cannot Update Department's Employee To Empty Or '{userModel.Departement_Title}' Department");
-                   
-                    Employee employee = userModel.GetEmployee();
-                    User user = userModel.GetUser();
-
-                    String orgNIC = employee.ID;
-
-                    if (!String.IsNullOrEmpty(userModel.NIC) && userModel.NIC.CompareTo(NewNIC) != 0)
-                    {
-                        if (String.IsNullOrWhiteSpace(userModel.NIC))
-                        throw new Exception($"Cannot Create Employee By Empty NIC");
-
-                        employee.ID = NewNIC.ToUpper();
-                        user.NIC = employee.ID;
-                        db.NewNIC(orgNIC, employee);
-                        udb.Update(user);
-                    }
-                    else
-                        db.Update(employee);
+                    if (ddb.GetUNDepartment().ID == employee.Department_ID)
+                        throw new Exception($"Cannot Update Department's Employee To Empty Or 'Uknown' Department");
 
                     if (ImageUrl != null)
                     {
-                        string ImageName = System.IO.Path.GetFileName(ImageUrl.FileName);
-                        string physicalPath = Server.MapPath("~/Content/Images/Users/" + employee.ID + ImageName);
-                        ImageUrl.SaveAs(physicalPath);
-                        user.Photo = employee.ID + ImageName;
-                    }
+                        if (System.IO.File.Exists($"~/Content/Images/Users/{employee.Picture}"))
+                            System.IO.File.Delete($"~/Content/Images/Users/{employee.Picture}");
 
-                    udb.Update(user);
+                        var str = "";
+                        string ImageName = Path.GetFileName(ImageUrl.FileName);
+                        do
+                        {
+                            str = GetName();
+                        } while (System.IO.File.Exists($"~/Content/Images/Users/{str}{ImageName}"));
+                        string physicalPath = Server.MapPath($"~/Content/Images/Users/{str}{ImageName}");
+                        ImageUrl.SaveAs(physicalPath);
+                        employee.Picture = $"{str}{ImageName}";
+                    }
+                    db.Update(employee);
                     return RedirectToAction("Index");
                 }
             }
@@ -185,15 +178,15 @@ namespace WebSite.Controllers
             {
                 ModelState.AddModelError("", ex.Message);
             }
-            ViewBag.Departement_Title = new SelectList(new MDepartments().Get_All()
-                .Where(i => i.Title.CompareTo("Unknown") != 0).ToList(), "Title", "Title", userModel.Departement_Title);
-            return View(userModel);
+            ViewBag.Department_ID = new SelectList(new MDepartments().Get_All()
+                .Where(i => i.Title.CompareTo("Unknown") != 0).ToList(), "ID", "Title", employee.Department_ID);
+            return View(employee);
         }
 
         // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(String ID)
+        public ActionResult DeleteConfirmed(int ID)
         {
             var action = new CheckController().CheckStatus("Employees");
             if (action != null) return action;

@@ -14,20 +14,18 @@ namespace Classes
         [Key,Required]
         public String ID { get; set; }
         public String Picture { get; set; }
-        [Display(Name = "Product Name")]
+        [Display(Name = "Product")]
         public String Product_Name { get; set; }
-        [Display(Name = "Producer")]
-        public String Producer_Name { get; set; }
-        [Display(Name = "Category")]
-        public String Category_Name { get; set; }
+        public int Producer_ID { get; set; }
+        public int Category_ID { get; set; }
         [Range(0,int.MaxValue)]
         public int Quantity { get; set; }
         [Range(0, float.MaxValue)]
         public float Price { get; set; }
-        [Range(0, 1)]
-        public float Discount { get; set; }
 
+        [ForeignKey("Category_ID")]
         public virtual Category Category { get; set; }
+        [ForeignKey("Producer_ID")]
         public virtual Producer Producer { get; set; }
     }
 }

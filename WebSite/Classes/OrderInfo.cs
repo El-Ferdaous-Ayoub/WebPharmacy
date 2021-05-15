@@ -22,7 +22,9 @@ namespace Classes
         [Range(0,float.MaxValue)]
         public float Price { get; set; }
 
+        [ForeignKey("Product_ID")]
         public virtual Product Product { get; set; }
+        [ForeignKey("Order_ID")]
         public virtual Order Order { get; set; }
     }
 }

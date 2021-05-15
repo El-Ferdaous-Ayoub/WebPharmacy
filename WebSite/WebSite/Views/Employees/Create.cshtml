@@ -1,4 +1,4 @@
-﻿@model Classes.Models.UserModel
+﻿@model Classes.Employee
 
 @{
     ViewBag.Title = "Create";
@@ -24,16 +24,17 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.Photo, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.Picture, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             <img src="~/Content/PNG/AddPicture.png" id="Photo" alt="Alternate Text" width="200" height="200" class="img-thumbnail" />
             <div class="input-group">
                 <div class="custom-file col-md-4">
-                    <input type="file" name="ImageUrl" value="Upload Image" class="custom-file-input" />
+                    <input type="file" name="ImageUrl" value="Upload Image" class="custom-file-input" 
+                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"/>
                     <label class="custom-file-label">Choose file</label>
                 </div>
             </div>
-            @Html.ValidationMessageFor(model => model.Photo, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.Picture, "", new { @class = "text-danger" })
         </div>
     </div>
 
@@ -95,42 +96,10 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.Department.Title, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.District, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.District, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.District, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Departement_Title, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownList("Departement_Title", null, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Departement_Title, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Health_Coverage, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Health_Coverage, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Health_Coverage, "", new { @class = "text-danger" })
+            @Html.DropDownList("Department_ID", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Department_ID, "", new { @class = "text-danger" })
         </div>
     </div>
 

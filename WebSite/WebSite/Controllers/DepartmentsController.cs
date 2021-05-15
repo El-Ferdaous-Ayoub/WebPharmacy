@@ -34,7 +34,7 @@ namespace WebSite.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(DepartmentModel DM)
+        public ActionResult Create(Department DM)
         {
             var action = new CheckController().CheckStatus("Departments");
             if (action != null) return action;
@@ -45,11 +45,7 @@ namespace WebSite.Controllers
                     if (String.IsNullOrEmpty(DM.Title) ||
                         String.IsNullOrWhiteSpace(DM.Title))
                         throw new Exception($"Cannot Create Department By Empty Title");
-
-                    Department department = DM.GetDepartment();
-                    Role role = DM.GetRole();
-                    db.Add(department);
-                    db.AddRole(role);
+                    db.Add(DM);
                     return RedirectToAction("Index");
                 }
             }
@@ -61,11 +57,11 @@ namespace WebSite.Controllers
         }
 
         // GET: Departements/Edit/5
-        public ActionResult Edit(String id)
+        public ActionResult Edit(int id)
         {
             var action = new CheckController().CheckStatus("Departments");
             if (action != null) return action;
-            if (id == null || id.CompareTo("Unknown") == 0)
+            if (db.GetUNDepartment().ID == id)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -74,10 +70,7 @@ namespace WebSite.Controllers
             {
                 return HttpNotFound();
             }
-            DepartmentModel DM = new DepartmentModel();
-            DM.SetDepartment(departement);
-            DM.SetRole(db.GetRole(id));
-            return View(DM);
+            return View(departement);
         }
 
         // POST: Departements/Edit/5
@@ -85,7 +78,7 @@ namespace WebSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(DepartmentModel DM, String NewTitle)
+        public ActionResult Edit(Department department)
         {
             var action = new CheckController().CheckStatus("Departments");
             if (action != null) return action;
@@ -93,21 +86,8 @@ namespace WebSite.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    Department department = DM.GetDepartment();
-                    Role role = DM.GetRole();
-                    db.UpdateRole(role);
-                    if (!String.IsNullOrEmpty(DM.Title) && NewTitle.CompareTo(DM.Title) != 0)
-                    {
-                        if (String.IsNullOrWhiteSpace(DM.Title))
-                            throw new Exception($"Cannot Update Department To Empty Title");
-                        Department NewDep = new Department()
-                        {
-                            Title = NewTitle,
-                            Time_Work = department.Time_Work,
-                            Salary = department.Salary
-                        };
-                        db.NewTitle(department.Title, NewDep);
-                    }
+                    if (String.IsNullOrWhiteSpace(department.Title))
+                        throw new Exception($"Cannot Update Department To Empty Title");
                     else db.Update(department);
 
                     return RedirectToAction("Index");
@@ -117,15 +97,15 @@ namespace WebSite.Controllers
             {
                 ModelState.AddModelError("", ex.Message);
             }
-            return View(DM);
+            return View(department);
         }
 
         // GET: Departements/Delete/5
-        public ActionResult Delete(String id)
+        public ActionResult Delete(int id)
         {
             var action = new CheckController().CheckStatus("Departments");
             if (action != null) return action;
-            if (id == null)
+            if (db.GetUNDepartment().ID == id)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -134,22 +114,19 @@ namespace WebSite.Controllers
             {
                 return HttpNotFound();
             }
-            DepartmentModel DM = new DepartmentModel();
-            DM.SetDepartment(departement);
-            DM.SetRole(db.GetRole(id));
-            return View(DM);
+            return View(departement);
         }
 
         // POST: Departements/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(String id)
+        public ActionResult DeleteConfirmed(int id)
         {
             var action = new CheckController().CheckStatus("Departments");
             if (action != null) return action;
             try
             {
-                if (id.CompareTo("Unknown") == 0) throw new Exception("Not authorized to delete");
+                if (db.GetUNDepartment().ID == id) throw new Exception("Not authorized to delete");
                 db.Remove(id);
                 return RedirectToAction("Index");
             }
